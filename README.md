@@ -5,7 +5,7 @@ FLIX, KICK ve FLICK, renkleri tabletlere kaptırmış New York'u Kıyamet Lordu'
 **Oyna:** https://kaanimamoglu27.github.io/Flix-Arkana/
 
 ## Oyunda neler var
-- Çizgi roman hikaye: 50 seviye, 5 bölüm. Her 10 seviyede Patron Koşusu'ndaki patronlar sırayla gelir; bölümler arasında çizgi roman, VORTEKS'ten sonra final ve mod biter. Son patron VORTEKS: Kıyamet Lordu'nun dev ekranla ele geçirdiği eski kahraman. Onu yenip kurtarınca çocuklar yeniden Flix oynuyor.
+- Çizgi roman hikaye: 40 seviye, 4 patron (İskelet Kral, Kemik Ejderha, Dev Zombi, VORTEKS); bölümler arasında çizgi roman, VORTEKS'ten sonra final ve mod biter. Son patron VORTEKS: Kıyamet Lordu'nun dev ekranla ele geçirdiği eski kahraman. Onu yenip kurtarınca çocuklar yeniden Flix oynuyor.
 - 3 kahraman: FLIX, KICK ve FLICK. Her birinin Common, Rare, Epic, Legendary, Mythic ve Godlike nadirlikte 9 kostümü var.
 - Hikayede arada açtığın diğer kahramanlar gökten inip yardım ediyor.
 - 5 mod: Hikaye, Sonsuz, Patron Koşusu, Flix Avı ve 😈 Cehennem (lav arenası, ateş yağmuru, lav taşması, 5 dalgada bir patron).
