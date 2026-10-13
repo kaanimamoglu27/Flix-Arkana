@@ -5,22 +5,28 @@ FLIX, KICK ve FLICK, renkleri tabletlere kaptırmış New York'u Kıyamet Lordu'
 **Oyna:** https://kaanimamoglu27.github.io/Flix-Arkana/
 
 ## Oyunda neler var
-- Çizgi roman hikaye: 50 dalga, her 10 dalgada bir patron ve yeni bir bölüm, 50. dalgada Kıyamet Lordu: Son Form ile final. Sonunda çocuklar yeniden Flix oynuyor.
+- Çizgi roman hikaye: 50 dalga, 10, 20, 30, 40 ve 50. dalgalarda patron ve yeni bölüm. Son patron VORTEKS: Kıyamet Lordu'nun dev ekranla ele geçirdiği eski kahraman. Onu yenip kurtarınca çocuklar yeniden Flix oynuyor.
 - 3 kahraman: FLIX, KICK ve FLICK. Her birinin Common, Rare, Epic, Legendary, Mythic ve Godlike nadirlikte 9 kostümü var.
 - Hikayede arada açtığın diğer kahramanlar gökten inip yardım ediyor.
-- 4 mod: Hikaye, Sonsuz, Patron Koşusu, Flix Avı.
-- 20 güç kartı, 8 yol arkadaşı, 5 harita, 5 boost (Dev FLIX, Uçuş, Roket Ayakkabı, Altın Yıldız, Mini FLIX).
-- Altın ve elmas ekonomisi. Web'de satın alma demodur, gerçek ödeme App Store sürümünde.
+- 5 mod: Hikaye, Sonsuz, Patron Koşusu, Flix Avı ve 😈 Cehennem (lav arenası, ateş yağmuru, lav taşması, 5 dalgada bir patron).
+- 8 harita; Lav Vadisi, Buz Çağı ve Deprem Şehri oynanışı da değiştirir. Çatlak binalar yıkılabilir, çökünce altındaki düşmanları ezer.
+- 20 güç kartı, 8 yol arkadaşı, 5 boost (Dev FLIX, Uçuş, Roket Ayakkabı, Altın Yıldız, Mini FLIX).
+- Altın ve elmas ekonomisi, 0,99 $'dan başlayan paketler, Reklamsız + VIP. Web'de satın alma demodur, gerçek ödeme App Store sürümünde.
 - Zorluk her 10 dalgada bir basamak artar.
 
 ## Kontroller
-Ekranda parmağını kaydırarak kaç, kahraman otomatik saldırır. 💨 atılma, FLIX gücü sağ altta. Telefonda dik tutsan da oyun kendini yatay çevirir.
+⚙️ Ayarlar'dan seç: Analog (parmağını sürükle), Dokunmatik (dokunduğun yere yürür) veya Yön tuşları (sol altta). Kahraman otomatik saldırır. 💨 atılma, FLIX gücü sağ altta. Telefonda dik tutsan da oyun kendini yatay çevirir.
 
 ## Dosyalar
 - `index.html`: oyunun tamamı (tek dosya, three.js).
 - `app/`: App Store ve Google Play paketi (Capacitor). Kurulum adımları `app/README.md` içinde.
 - `shots/`: ekran görüntüleri.
 
+![Cehennem](shots/v23_1_cehennem.jpg)
+![Çatlak bina](shots/v23_2_catlak_bina.jpg)
+![Lav Vadisi](shots/v23_3_lav_vadisi.jpg)
+![Ayarlar](shots/v23_4_ayarlar.jpg)
+![Paketler](shots/v23_5_paketler.jpg)
 ![Menü](shots/v22_1_menu.jpg)
 ![Kahramanlar](shots/v22_2_heroes.jpg)
 ![Kostümler](shots/v22_3_skins.jpg)

@@ -23,6 +23,7 @@ Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır
 ## Uygulama içi ürünler
 | Kimlik | Tür | Fiyat | İçerik |
 |---|---|---|---|
+| bundle_mini | Tüketilebilir | 0,99 $ | Mini Paket: 1.000 altın + 60 elmas |
 | gems_80 | Tüketilebilir | 0,99 $ | 80 elmas |
 | gems_500 | Tüketilebilir | 4,99 $ | 500 elmas |
 | gems_1200 | Tüketilebilir | 9,99 $ | 1.200 elmas |
@@ -34,14 +35,21 @@ Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır
 | coins_15000 | Tüketilebilir | 9,99 $ | 15.000 altın |
 | coins_40000 | Tüketilebilir | 19,99 $ | 40.000 altın |
 | starter | Tüketilemez | 2,99 $ | KICK kahramanı + 5.000 altın + 150 elmas (tek sefer, geri yüklenebilir) |
+| bundle_hero | Tüketilemez | 4,99 $ | FLICK + Kardan Adam (FLICK) ve Ninja (KICK) kostümleri + 4.000 altın + 300 elmas |
+| bundle_adv | Tüketilemez | 9,99 $ | Lav Vadisi, Buz Çağı ve Deprem Şehri haritaları + 8.000 altın + 700 elmas |
+| bundle_legend | Tüketilemez | 19,99 $ | KICK, FLICK ve 3 Mythic kostüm + 20.000 altın + 1.500 elmas |
+| bundle_god | Tüketilemez | 49,99 $ | KICK, FLICK ve 3 Godlike kostüm + 50.000 altın + 4.000 elmas |
+| noads | Tüketilemez | 2,99 $ | Reklamsız + VIP: günlük hediye 2 katı |
 
-Oyun içi ekonomi iki para birimiyle çalışır. Altın her koşudan (yenilen düşman, dalga, patron, toplanan Flix'ler) ve günlük hediyeden gelir; kahramanlar (KICK 2.500, FLICK 4.000), Common-Legendary kostümler, yol arkadaşları ve haritalar altınla açılır. Elmas patron yenince, her 10 dalgada, hikayeyi bitirince (+120) ve günlük hediyeyle gelir; Mythic (1.200 💎) ve Godlike (6.500 💎) kostümler elmasla açılır, elmas altına da çevrilebilir. Kostüm nadirlikleri: Common, Rare, Epic, Legendary, Mythic, Godlike. Hiçbir şey sadece parayla açılmaz; para yalnızca hızlandırır. Oyunda reklam yok.
+Oyun içi ekonomi iki para birimiyle çalışır. Altın her koşudan (yenilen düşman, dalga, patron, toplanan Flix'ler) ve günlük hediyeden gelir; kahramanlar (KICK 2.500, FLICK 4.000), Common-Legendary kostümler, yol arkadaşları ve haritalar altınla açılır. Elmas patron yenince, her 10 dalgada, hikayeyi bitirince (+120) ve günlük hediyeyle gelir; Mythic (1.200 💎) ve Godlike (6.500 💎) kostümler elmasla açılır, elmas altına da çevrilebilir. Kostüm nadirlikleri: Common, Rare, Epic, Legendary, Mythic, Godlike. Hiçbir şey sadece parayla açılmaz; para yalnızca hızlandırır. Oyunda şu an reklam yok; "Reklamsız + VIP" bugün günlük hediyeyi 2 katına çıkarır, reklam eklenirse onları da kapatır. App Store incelemesinde reklamsız oyunda "reklamsız" satmak sorun çıkarabilir: reklam eklenene kadar ürünün mağaza adını "VIP" yapmak daha güvenli.
 
 Not: satın alma şu an telefonun içinde onaylanıyor. İleride hileyi azaltmak için sunucu doğrulaması (ör. RevenueCat) eklenebilir.
 
 ## Görüntü ve hız
 - Ayarlardaki "💎 Ultra" ekranın tam çözünürlüğünde çizer (iPhone'da ekranın kendi piksel sayısı, 4K ekranda en fazla 4K). "🎬 2K" daha hafif, "⚡ Hızlı" eski telefonlar için.
-- Oyun 60 fps hedefler: telefon zorlanırsa çözünürlüğü kademeli düşürür, rahatlayınca geri yükseltir.
+- Oyun 60 fps hedefler: telefon zorlanırsa çözünürlüğü kademeli düşürür (3 saniyelik ölçüm, sakin basamaklar, ileri geri zıplamaz), rahatlayınca geri yükseltir. Çözünürlük değişimi artık malzemeleri yeniden derlemez; eskiden ara ara görülen takılmanın ana sebebi buydu.
+- Şehir blokları tek karede değil, ekran dışında kare başına bir blok olarak kurulur. Patron ve yardımcı kahraman çizimleri menüdeyken önceden derlenir (ilk patron artık oyunu dondurmaz). Gölgeler kahramanı takip eder.
+- Kontrol: ⚙️ Ayarlar'dan Analog (sürükle), Dokunmatik (dokunduğun yere yürür) veya Yön tuşları (sol altta 8 yönlü tuş takımı).
 
 ## Mağaza metni (TR)
 **Ad:** ARKANA: Flix Kahramanları

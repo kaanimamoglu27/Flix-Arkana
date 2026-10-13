@@ -12,8 +12,8 @@
   const P = Cap.Plugins || {};
 
   // Product ids must match App Store Connect and Google Play Console exactly.
-  const CONSUMABLE = ['gems_80', 'gems_500', 'gems_1200', 'gems_2600', 'gems_7000', 'gems_15000', 'coins_1000', 'coins_6000', 'coins_15000', 'coins_40000'];
-  const NON_CONSUMABLE = ['starter'];
+  const CONSUMABLE = ['bundle_mini', 'gems_80', 'gems_500', 'gems_1200', 'gems_2600', 'gems_7000', 'gems_15000', 'coins_1000', 'coins_6000', 'coins_15000', 'coins_40000'];
+  const NON_CONSUMABLE = ['starter', 'bundle_hero', 'bundle_adv', 'bundle_legend', 'bundle_god', 'noads'];
 
   let store = null; const pending = {};
   function settle(id, ok) { if (pending[id]) { pending[id](ok); delete pending[id]; } }
