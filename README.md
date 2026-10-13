@@ -5,17 +5,17 @@ FLIX, KICK ve FLICK, renkleri tabletlere kaptırmış New York'u Kıyamet Lordu'
 **Oyna:** https://kaanimamoglu27.github.io/Flix-Arkana/
 
 ## Oyunda neler var
-- Çizgi roman hikaye: 50 dalga, 10, 20, 30, 40 ve 50. dalgalarda patron ve yeni bölüm. Son patron VORTEKS: Kıyamet Lordu'nun dev ekranla ele geçirdiği eski kahraman. Onu yenip kurtarınca çocuklar yeniden Flix oynuyor.
+- Çizgi roman hikaye: 50 dalga. 10, 20, 30, 40 ve 50. dalgalarda patron; her patrondan önce tanıtım sayfası, yenince yeni bölüm. Son patron VORTEKS: Kıyamet Lordu'nun dev ekranla ele geçirdiği eski kahraman. Onu yenip kurtarınca çocuklar yeniden Flix oynuyor.
 - 3 kahraman: FLIX, KICK ve FLICK. Her birinin Common, Rare, Epic, Legendary, Mythic ve Godlike nadirlikte 9 kostümü var.
 - Hikayede arada açtığın diğer kahramanlar gökten inip yardım ediyor.
 - 5 mod: Hikaye, Sonsuz, Patron Koşusu, Flix Avı ve 😈 Cehennem (lav arenası, ateş yağmuru, lav taşması, 5 dalgada bir patron).
-- 8 harita; Lav Vadisi, Buz Çağı ve Deprem Şehri oynanışı da değiştirir. Çatlak binalar yıkılabilir, çökünce altındaki düşmanları ezer.
-- 20 güç kartı, 8 yol arkadaşı, 5 boost (Dev FLIX, Uçuş, Roket Ayakkabı, Altın Yıldız, Mini FLIX).
+- 11 harita (Şeker Şehir, Retro Dalga, Altın Saat dahil); Lav Vadisi, Buz Çağı ve Deprem Şehri oynanışı da değiştirir. Çatlak binalar yıkılabilir, çökünce altındaki düşmanları ezer.
+- Kahraman elinden Flix fırlatır. 26 güç kartı (Lazer Işını, Flix Bombası, Flix Kırbacı, Kristal Mızrak, Flix Kulesi dahil), 8 yol arkadaşı, 5 boost (Dev FLIX, Uçuş, Roket Ayakkabı, Altın Yıldız, Mini FLIX).
 - Altın ve elmas ekonomisi, 0,99 $'dan başlayan paketler, Reklamsız + VIP. Web'de satın alma demodur, gerçek ödeme App Store sürümünde.
 - Zorluk her 10 dalgada bir basamak artar.
 
 ## Kontroller
-⚙️ Ayarlar'dan seç: Analog (parmağını sürükle), Dokunmatik (dokunduğun yere yürür) veya Yön tuşları (sol altta). Kahraman otomatik saldırır. 💨 atılma, FLIX gücü sağ altta. Telefonda dik tutsan da oyun kendini yatay çevirir.
+⚙️ Ayarlar'dan seç: Analog (parmağını sürükle), Dokunmatik (dokunduğun yere yürür) veya Yön tuşları (sol altta). Kahraman otomatik saldırır. 💨 atılma, FLIX gücü sağ altta. Telefonda dik tutsan da oyun kendini yatay çevirir. iPad'de arayüz ekrana göre büyür.
 
 ## Dosyalar
 - `index.html`: oyunun tamamı (tek dosya, three.js).
