@@ -3,12 +3,13 @@
 Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır iskelettir. Oyun `www/` içinde, internet olmadan çalışır: three.js, efekt dosyaları ve Fredoka ve Bangers (çizgi roman) yazı tipleri yanında.
 
 ## Klasörler
-- `www/index.html` oyunun kendisi. Elle düzenleme: web sürümü (`../index.html`) değişince `python3 tools/build_www.py` çalıştır, bu dosyayı yeniden üretir ve dış bağlantı kalmadığını kontrol eder.
+- `www/index.html` oyunun kendisi. Elle düzenleme: web sürümü (`../arkana10.html`) değişince `python3 tools/build_www.py` çalıştır, bu dosyayı yeniden üretir ve dış bağlantı kalmadığını kontrol eder.
 - `www/native-bridge.js` gerçek satın alma (App Store / Google Play) ve titreşim bağlantısı. Web'de hiçbir şey yapmaz.
 - `capacitor.config.json` uygulama kimliği `com.flixtoys.arkana`, adı ARKANA.
 - `tools/ios_setup.sh` iOS projesini yatay ekrana kilitler, durum çubuğunu gizler, şifreleme sorusunu kapatır.
 - `store/icon-1024.png` uygulama ikonu (oyundaki FLIX karakterinden). İstersen tasarımcı son halini çizebilir.
 - `store/screenshots/` 2796x1290 ekran görüntüleri (iPhone 6.7" yatay). App Store 6.9" için de kabul eder.
+- Eski kurye oyununun paketi `../app_lootback_eski/` klasöründe duruyor, kullanılmıyor.
 
 ## Yayına çıkmak için adımlar (bir geliştirici, Mac ile 1-2 gün)
 1. Mac'e Xcode ve Node 20 kur. Bu klasörde: `npm install`, `npx cap add ios`, `sh tools/ios_setup.sh`, `npm run sync`.

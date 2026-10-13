@@ -5,12 +5,13 @@ FLIX, KICK ve FLICK, renkleri tabletlere kaptırmış New York'u Kıyamet Lordu'
 **Oyna:** https://kaanimamoglu27.github.io/Flix-Arkana/
 
 ## Oyunda neler var
-- Çizgi roman hikaye: 50 dalga. 10, 20, 30, 40 ve 50. dalgalarda patron; her patrondan önce tanıtım sayfası, yenince yeni bölüm. Son patron VORTEKS: Kıyamet Lordu'nun dev ekranla ele geçirdiği eski kahraman. Onu yenip kurtarınca çocuklar yeniden Flix oynuyor.
+- Çizgi roman hikaye: 50 seviye, 5 bölüm. Her 10 seviyede Patron Koşusu'ndaki patronlar sırayla gelir; bölümler arasında çizgi roman, VORTEKS'ten sonra final ve mod biter. Son patron VORTEKS: Kıyamet Lordu'nun dev ekranla ele geçirdiği eski kahraman. Onu yenip kurtarınca çocuklar yeniden Flix oynuyor.
 - 3 kahraman: FLIX, KICK ve FLICK. Her birinin Common, Rare, Epic, Legendary, Mythic ve Godlike nadirlikte 9 kostümü var.
 - Hikayede arada açtığın diğer kahramanlar gökten inip yardım ediyor.
 - 5 mod: Hikaye, Sonsuz, Patron Koşusu, Flix Avı ve 😈 Cehennem (lav arenası, ateş yağmuru, lav taşması, 5 dalgada bir patron).
 - 11 harita (Şeker Şehir, Retro Dalga, Altın Saat dahil); Lav Vadisi, Buz Çağı ve Deprem Şehri oynanışı da değiştirir. Çatlak binalar yıkılabilir, çökünce altındaki düşmanları ezer.
-- Kahraman elinden Flix fırlatır. 26 güç kartı (Lazer Işını, Flix Bombası, Flix Kırbacı, Kristal Mızrak, Flix Kulesi dahil), 8 yol arkadaşı, 5 boost (Dev FLIX, Uçuş, Roket Ayakkabı, Altın Yıldız, Mini FLIX).
+- Kahraman elinden Flix fırlatır. 24 silah (Kılıç, Omuz Roketi, Flix Makinesi, Dev Çekiç, Alev Püskürtücü, Lazer, Flix Bombası dahil) karakterin üstünde görünür, her seviyede yeni silah hediye gelir. 🎱 Sekme Gücü mermileri düşmandan düşmana sektirir. Her 5 seviyede kahraman kademe atlar (güç + görünüm), gelişim 50'de durur.
+- Yol arkadaşları ve boostlar: 8 yol arkadaşı, 5 boost (Dev FLIX, Uçuş, Roket Ayakkabı, Altın Yıldız, Mini FLIX).
 - Altın ve elmas ekonomisi, 0,99 $'dan başlayan paketler, Reklamsız + VIP. Web'de satın alma demodur, gerçek ödeme App Store sürümünde.
 - Zorluk her 10 dalgada bir basamak artar.
 
