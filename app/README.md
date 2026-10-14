@@ -8,7 +8,7 @@ Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır
 - `capacitor.config.json` uygulama kimliği `com.flixtoys.arkana`, adı ARKANA.
 - `tools/ios_setup.sh` iOS projesini yatay ekrana kilitler, durum çubuğunu gizler, şifreleme sorusunu kapatır.
 - `store/icon-1024.png` uygulama ikonu (oyundaki FLIX karakterinden). İstersen tasarımcı son halini çizebilir.
-- `store/screenshots/` 2796x1290 ekran görüntüleri (iPhone 6.7" yatay). App Store 6.9" için de kabul eder.
+- `store/screenshots/` 6 adet 2796x1290 ekran görüntüsü (v30: menü, savaş, VORTEKS, mağaza, modlar, çizgi roman). App Store 6.9" için de kabul eder.
 - Eski kurye oyununun paketi `../app_lootback_eski/` klasöründe duruyor, kullanılmıyor.
 
 ## Yayına çıkmak için adımlar (bir geliştirici, Mac ile 1-2 gün)
@@ -47,10 +47,10 @@ Oyun içi ekonomi iki para birimiyle çalışır. Altın her koşudan (yenilen d
 Not: satın alma şu an telefonun içinde onaylanıyor. İleride hileyi azaltmak için sunucu doğrulaması (ör. RevenueCat) eklenebilir.
 
 ## Görüntü ve hız
-- Ayarlardaki "💎 Ultra" ekranın tam çözünürlüğünde çizer (iPhone'da ekranın kendi piksel sayısı, 4K ekranda en fazla 4K). "🎬 2K" daha hafif, "⚡ Hızlı" eski telefonlar için.
-- Oyun 60 fps hedefler: telefon zorlanırsa çözünürlüğü kademeli düşürür (3 saniyelik ölçüm, sakin basamaklar, ileri geri zıplamaz), rahatlayınca geri yükseltir. Çözünürlük değişimi artık malzemeleri yeniden derlemez; eskiden ara ara görülen takılmanın ana sebebi buydu.
-- Şehir blokları tek karede değil, ekran dışında kare başına bir blok olarak kurulur. Patron ve yardımcı kahraman çizimleri menüdeyken önceden derlenir (ilk patron artık oyunu dondurmaz). Gölgeler kahramanı takip eder.
-- Kontrol: ⚙️ Ayarlar'dan Analog (sürükle), Dokunmatik (dokunduğun yere yürür) veya Yön tuşları (sol altta 8 yönlü tuş takımı).
+- Standart: "🎬 2K · 60 fps" (her cihazda varsayılan, 120 Hz ekranlarda da 60 kare). Ayarlar'da "✨ 4K · 30 fps" (ekranın tam çözünürlüğü, sabit 30 kare) ve "⚡ Hızlı" (eski cihazlar) var.
+- Otomatik ayar 1,5 saniyede bir ölçer; seçilen modun hedefinin (60 ya da 30) altına düşünce çözünürlüğü kademeli indirir, rahatlayınca geri yükseltir. Standart modda en alt kademe de yetmezse bir kez Hızlı'ya geçer ve ekranda söyler.
+- Telefonda ekranda en fazla 170 düşman, aynı anda en fazla 12 ses, sınırlı efekt parçacığı. Patron çizimleri menüdeyken, silah görünümleri koşu başında önceden hazırlanır. Duraklatma ve kart ekranlarında sahne saniyede 10 kez çizilir; uygulama arka plana geçince oyun duraklar ve ses kapanır.
+- Kontrol: ⚙️ Ayarlar'dan Analog (sürükle), Dokunmatik (dokunduğun yere yürür) veya Yön tuşları.
 
 ## Mağaza metni (TR)
 **Ad:** ARKANA: Flix Kahramanları
@@ -60,11 +60,11 @@ New York'ta yarıklar açıldı ve Kıyamet Lordu'nun ordusu sokaklara döküld�
 
 • Çizgi roman hikaye: tabletlere kapılan şehir renksizleşti; ruhları kurtar, New York'u bölge bölge yeniden renklendir.
 • Tek parmakla oyna: sen kaç, kahramanın otomatik saldırır.
-• Her seviyede güç kartı seç: ateş topları, şimşek, meteor, dönen yıldızlar ve daha fazlası.
-• 4 mod: Hikaye (50 dalga, 5 dev patron, epik final), Sonsuz, Patron Koşusu ve Flix Avı.
+• 24 silah karakterin üstünde görünür: kılıç, roket, lazer, Flix bombası, kırbaç ve daha fazlası. Her 5 seviyede kahraman güçlenir ve görünüşü değişir.
+• 5 mod: Hikaye (40 seviye, 4 patron: İskelet Kral, Kemik Ejderha, Dev Zombi, VORTEKS), Sonsuz, Patron Koşusu, Flix Avı ve Cehennem.
 • Şehre dağılmış Flix figürlerini topla, kombo yap, rekor kır.
 • Yarıkları kapat, elit düşmanları devir, altın Flix'leri kap.
-• FLIX, KICK ve FLICK: 3 kahraman, her birine Common'dan Godlike'a 9 kostüm. 8 yol arkadaşı, 5 harita.
+• FLIX, KICK ve FLICK: 3 kahraman, her birine Common'dan Godlike'a 9 kostüm. 8 yol arkadaşı, 11 harita.
 • Hikayede arada açtığın diğer kahramanlar yardıma koşar.
 • Güçlü vuruş hissi: titreşim, parlamalar, ekran sarsıntısı.
 • Reklam yok.
@@ -79,11 +79,11 @@ Rifts have torn open across New York and the Doom Lord's army is pouring into th
 
 • Comic-book story: the city lost its colour to tablets; free the souls and paint New York back, district by district.
 • One-thumb play: you dodge, your hero attacks on his own.
-• Pick a power card every level: fireballs, lightning, meteors, spinning stars and more.
-• 4 modes: Story (50 waves, 5 giant bosses, epic finale), Endless, Boss Rush and Flix Hunt.
+• 24 weapons shown on your hero: sword, rockets, laser, Flix bombs, whip and more. Every 5 levels your hero powers up and looks stronger.
+• 5 modes: Story (40 levels, 4 bosses: Skeleton King, Bone Dragon, Giant Zombie, VORTEKS), Endless, Boss Rush, Flix Hunt and Hell.
 • Collect Flix figures scattered across the city, chain combos, chase high scores.
 • Close rifts, topple elite enemies, grab golden Flix.
-• FLIX, KICK and FLICK: 3 heroes with 9 skins each, from Common to Godlike. 8 companions, 5 maps.
+• FLIX, KICK and FLICK: 3 heroes with 9 skins each, from Common to Godlike. 8 companions, 11 maps.
 • In story mode your other unlocked heroes sometimes drop in to help.
 • Punchy hit feel: haptics, flashes, screen shake.
 • No ads.
