@@ -14,7 +14,7 @@ Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır
 ## Yayına çıkmak için adımlar (bir geliştirici, Mac ile 1-2 gün)
 1. Mac'e Xcode ve Node 20 kur. Bu klasörde: `npm install`, `npx cap add ios`, `sh tools/ios_setup.sh`, `npm run sync`.
 2. Apple Developer hesabı (yıllık 99 $), Flix şirketi adına. App Store Connect'te yeni uygulama: paket kimliği `com.flixtoys.arkana`.
-3. App Store Connect > Uygulama İçi Satın Alma bölümünde aşağıdaki 11 ürünü **aynı kimliklerle** oluştur. Oyun fiyatları mağazadan okur, Türkiye'de TL gösterir.
+3. App Store Connect > Uygulama İçi Satın Alma bölümünde aşağıdaki 17 ürünü **aynı kimliklerle** oluştur. Oyun fiyatları mağazadan okur, Türkiye'de TL gösterir.
 4. Xcode'da `ios/App` projesini aç, Signing'de ekibi seç, Capabilities'e "In-App Purchase" ekle. App ikonunu `store/icon-1024.png` ile değiştir.
 5. Gizlilik politikasını (aşağıda) flixtoysofficial.com'da yayınla, linkini App Store Connect'e gir.
 6. TestFlight ile gerçek telefonda dene: Sandbox hesabıyla her paketi bir kez satın al, "Satın alımları geri yükle" düğmesini dene, titreşimi hisset.
