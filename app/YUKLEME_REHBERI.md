@@ -70,6 +70,7 @@ Xcode açılınca:
 4. **Uygulama Gizliliği**: reklam olduğu için artık "Veri toplanmıyor" seçilemez. `app/README.md` içindeki "Gizlilik politikası" bölümünde neyin işaretleneceği yazıyor (Cihaz Kimliği, Yaklaşık Konum, Reklam Verileri, Tanılama). Politika metnini flixtoysofficial.com'da bir sayfaya koy ve linkini gir. Oyun açılışta iPhone'un "takip izni" sorusunu sorar; Apple bunu ister.
 5. **Yaş derecelendirmesi**: "Çizgi film veya fantastik şiddet: Seyrek/Hafif" seç. Sonuç 9+ olur.
 6. **Sürüm sayfası**:
+   - **İngilizce sayfa için önerilen set:** `store/pro_en/iphone_6.9/` ve `store/pro_en/ipad_13/` (7'şer görsel, sırayla). Uygulama ikonu: `store/pro_en/icon-1024.png`. Kapak görseli (web sitesi, sosyal medya, öne çıkarma başvurusu): `store/pro_en/cover_3840x2160.png`.
    - Ekran görüntüleri: iPhone "6,9 inç" bölümüne `store/screenshots/phone_tr/` (Türkçe) ve `phone_en/` (İngilizce), iPad "13 inç" bölümüne `ipad_tr/` ve `ipad_en/` içindeki 8'er görseli sırayla yükle.
    - Ad, alt başlık, tanıtım metni, açıklama, anahtar kelimeler ve yenilikler: `store/MAGAZA_METINLERI.md` dosyasından kopyala (Türkçe ve İngilizce hazır, karakter sınırlarına uygun).
    - Destek URL'si: flixtoysofficial.com.
