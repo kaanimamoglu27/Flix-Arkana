@@ -1,8 +1,9 @@
 /* ARKANA native bridge (Capacitor 6).
-   The game calls window.FlixNative.{buy, restore, price, haptic}.
+   The game calls window.FlixNative.{buy, restore, price, haptic, showRewardedAd}.
    On the web this file does nothing and the store runs as a clearly marked demo.
    Inside the iOS / Android app it connects to:
      - cordova-plugin-purchase (CdvPurchase v13) for App Store / Google Play in-app purchases
+     - @capacitor-community/admob for the one rewarded ad after death ("watch an ad, keep playing")
      - @capacitor/haptics for hit vibration
      - @capacitor/status-bar to hide the status bar */
 (function () {
@@ -40,6 +41,33 @@
     H.impact({style: ms >= 80 ? 'HEAVY' : ms >= 25 ? 'MEDIUM' : 'LIGHT'}).catch(() => {});
   }
 
+  // Rewarded ad (AdMob). These are Google's public TEST ids; replace them with your own
+  // AdMob ad unit ids before sending the app to review (AdMob > Apps > Ad units).
+  const AD_UNIT = ios ? 'ca-app-pub-3940256099942544/1712485313' : 'ca-app-pub-3940256099942544/5224354917';
+  const AD_TESTING = AD_UNIT.indexOf('3940256099942544') >= 0;
+  let adReady = null;
+  async function initAds() {
+    const A = P.AdMob; if (!A) return;
+    try {
+      await A.initialize({initializeForTesting: AD_TESTING});
+      if (ios) { try { await A.requestTrackingAuthorization(); } catch (e) {} }
+      try { const c = await A.requestConsentInfo(); if (c && c.isConsentFormAvailable && c.status === 'REQUIRED') await A.showConsentForm(); } catch (e) {}
+      prepAd();
+    } catch (e) { console.warn('admob init', e); }
+  }
+  function prepAd() { const A = P.AdMob; if (!A) return; adReady = A.prepareRewardVideoAd({adId: AD_UNIT, isTesting: AD_TESTING}).then(() => true).catch(() => false); }
+  // resolves true when the player earned the reward, or when no ad could be shown (we never punish a missing ad), false when closed early
+  async function showRewardedAd() {
+    const A = P.AdMob; if (!A) return true;
+    if (!adReady) prepAd();
+    const ok = await adReady; adReady = null;
+    if (!ok) { prepAd(); return true; }
+    let got = false; const h = await A.addListener('onRewardedVideoAdReward', () => { got = true; });
+    try { await A.showRewardVideoAd(); got = true; } catch (e) { got = true; }
+    try { h.remove(); } catch (e) {}
+    prepAd(); return got;
+  }
+
   window.FlixNative = {
     buy(id) {
       return new Promise(res => {
@@ -57,9 +85,11 @@
     },
     // localized price string from the store, e.g. "₺44,99"; null until the store has loaded
     price(id) { const p = store && store.get(id); return p && p.pricing ? p.pricing.price : null; },
-    haptic
+    haptic,
+    showRewardedAd
   };
 
   document.addEventListener('deviceready', initStore, false);
+  initAds();
   if (P.StatusBar) P.StatusBar.hide().catch(() => {});
 })();

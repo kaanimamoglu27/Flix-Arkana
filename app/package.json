@@ -13,6 +13,7 @@
     "@capacitor/core": "^6.1.0",
     "@capacitor/ios": "^6.1.0",
     "@capacitor/android": "^6.1.0",
+    "@capacitor-community/admob": "^6.2.0",
     "@capacitor/haptics": "^6.0.0",
     "@capacitor/status-bar": "^6.0.0",
     "cordova-plugin-purchase": "^13.10.0"

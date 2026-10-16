@@ -1,8 +1,17 @@
 # ARKANA'yı App Store'a yükleme rehberi
 
-Oyun hazır: `app/` klasörü iPhone/iPad uygulamasına dönüşecek her şeyi içeriyor (oyun, internetsiz çalışan dosyalar, ikon, 6 ekran görüntüsü, mağaza metinleri, satın alma kimlikleri). Aynı klasör GitHub'da da var: `kaanimamoglu27/Flix-Arkana` reposunun `app/` klasörü.
+Oyun hazır: `app/` klasörü iPhone/iPad uygulamasına dönüşecek her şeyi içeriyor (oyun, internetsiz çalışan dosyalar, ikon, iPhone ve iPad için Türkçe ve İngilizce 8'er mağaza görseli, mağaza metinleri, satın alma kimlikleri, ödüllü reklam bağlantısı). Aynı klasör GitHub'da da var: `kaanimamoglu27/Flix-Arkana` reposunun `app/` klasörü.
 
-Yükleme 3 parçadan oluşur: **hesap**, **uygulamayı derleme**, **App Store Connect'te sayfayı doldurup incelemeye gönderme**.
+Yükleme 4 parçadan oluşur: **hesap**, **reklam hesabı (AdMob)**, **uygulamayı derleme**, **App Store Connect'te sayfayı doldurup incelemeye gönderme**.
+
+## 1b. AdMob reklam hesabı (sen yapmalısın, 15 dakika)
+
+Ölünce çıkan "Reklam izle, devam et" düğmesi uygulamada Google AdMob'dan gerçek reklam gösterir.
+1. https://admob.google.com adresinde Google hesabınla AdMob hesabı aç, ödeme bilgilerini gir.
+2. **Uygulamalar > Uygulama ekle > iOS**, adı ARKANA. Çıkan **uygulama kimliği** `ca-app-pub-...~...` şeklindedir.
+3. Bu uygulamada **Reklam birimi ekle > Ödüllü (Rewarded)**. Çıkan **reklam birimi kimliği** `ca-app-pub-.../...` şeklindedir.
+4. İki kimliği geliştiriciye (ya da bana) ver. Uygulama kimliği `tools/ios_setup.sh` komutuna, reklam birimi `www/native-bridge.js` içindeki `AD_UNIT` satırına girer. Şu an Google'ın test kimlikleri duruyor: test reklamı gösterir, para kazandırmaz.
+5. App Store'da yayına çıkınca AdMob'da uygulamayı mağaza sayfasına bağla.
 
 ---
 
@@ -32,7 +41,7 @@ Mac'te adımlar (Terminal'de, `app` klasörünün içinde):
 ```
 npm install
 npx cap add ios
-sh tools/ios_setup.sh
+ADMOB_APP_ID=ca-app-pub-XXXX~YYYY sh tools/ios_setup.sh
 npm run sync
 npx cap open ios
 ```
@@ -54,18 +63,17 @@ Xcode açılınca:
 2. **Uygulama İçi Satın Almalar**: `app/README.md` içindeki tablodaki 17 ürünü **aynı kimliklerle** oluştur (ör. `gems_500`, `starter`, `noads`).
    - Türleri tabloda yazıyor: tüketilebilir ya da tüketilemez.
    - Fiyatları tablodaki dolar seviyelerinden seç. Türkiye fiyatını Apple TL'ye kendisi çevirir.
-   - `noads` ürününün mağaza adını **"VIP"** yap. Oyunda reklam olmadığı için "Reklamsız" adı incelemede reddedilebilir.
+   - `noads` ürününün mağaza adı: **"Reklamsız VIP"**. Ölünce reklam izlemeden devam ettirir ve günlük hediyeyi 2 katına çıkarır.
 3. **TestFlight**: yüklenen sürüm 10-30 dakikada burada görünür.
    - Kendini test kullanıcısı olarak ekle, iPhone'a TestFlight uygulamasını indir, oyunu kur.
    - **Ayarlar > App Store > Sandbox Hesabı** ile bir paketi satın almayı ve "Satın alımları geri yükle"yi dene. Sandbox'ta para çekilmez.
-4. **Uygulama Gizliliği**: "Veri toplanmıyor" seç. Gizlilik politikası metni `app/README.md` içinde hazır; flixtoysofficial.com'da bir sayfaya koy ve linkini gir.
+4. **Uygulama Gizliliği**: reklam olduğu için artık "Veri toplanmıyor" seçilemez. `app/README.md` içindeki "Gizlilik politikası" bölümünde neyin işaretleneceği yazıyor (Cihaz Kimliği, Yaklaşık Konum, Reklam Verileri, Tanılama). Politika metnini flixtoysofficial.com'da bir sayfaya koy ve linkini gir. Oyun açılışta iPhone'un "takip izni" sorusunu sorar; Apple bunu ister.
 5. **Yaş derecelendirmesi**: "Çizgi film veya fantastik şiddet: Seyrek/Hafif" seç. Sonuç 9+ olur.
 6. **Sürüm sayfası**:
-   - Ekran görüntüleri: `store/screenshots/` içindeki 6 görüntüyü "6,9 inç" ya da "6,7 inç" bölümüne yükle.
-   - iPad için de ister. Aynı görüntüler genelde kabul edilir; istersen iPad boyutunda ayrıca çekerim.
-   - Açıklama ve anahtar kelimeler: `app/README.md` içindeki "Mağaza metni (TR)" ve İngilizce bölümünden kopyala.
+   - Ekran görüntüleri: iPhone "6,9 inç" bölümüne `store/screenshots/phone_tr/` (Türkçe) ve `phone_en/` (İngilizce), iPad "13 inç" bölümüne `ipad_tr/` ve `ipad_en/` içindeki 8'er görseli sırayla yükle.
+   - Ad, alt başlık, tanıtım metni, açıklama, anahtar kelimeler ve yenilikler: `store/MAGAZA_METINLERI.md` dosyasından kopyala (Türkçe ve İngilizce hazır, karakter sınırlarına uygun).
    - Destek URL'si: flixtoysofficial.com.
-   - Kategori: Oyunlar > Aksiyon.
+   - Kategori: Oyunlar > Aksiyon. İkinci kategori: Oyunlar > Arcade.
 7. **Derleme** bölümünden TestFlight'taki sürümü seç, satın alma ürünlerini bu sürüme ekle.
 8. **İncelemeye Gönder**. Apple genelde 1-2 günde cevap verir. Ret gelirse sebebini buraya yaz, düzeltirim.
 

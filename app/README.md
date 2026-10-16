@@ -4,15 +4,17 @@ Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır
 
 ## Klasörler
 - `www/index.html` oyunun kendisi. Elle düzenleme: web sürümü (`../arkana10.html`) değişince `python3 tools/build_www.py` çalıştır, bu dosyayı yeniden üretir ve dış bağlantı kalmadığını kontrol eder.
-- `www/native-bridge.js` gerçek satın alma (App Store / Google Play) ve titreşim bağlantısı. Web'de hiçbir şey yapmaz.
+- `www/native-bridge.js` gerçek satın alma (App Store / Google Play), ödüllü reklam (AdMob) ve titreşim bağlantısı. Web'de hiçbir şey yapmaz; web'de reklam yerine 5 saniyelik Flix kartı çıkar.
 - `capacitor.config.json` uygulama kimliği `com.flixtoys.arkana`, adı ARKANA.
-- `tools/ios_setup.sh` iOS projesini yatay ekrana kilitler, durum çubuğunu gizler, şifreleme sorusunu kapatır.
+- `tools/ios_setup.sh` iOS projesini yatay ekrana kilitler, durum çubuğunu gizler, şifreleme sorusunu kapatır, AdMob kimliğini ve izin metnini ekler.
 - `store/icon-1024.png` uygulama ikonu (oyundaki FLIX karakterinden). İstersen tasarımcı son halini çizebilir.
-- `store/screenshots/` 6 adet 2796x1290 ekran görüntüsü (v30: menü, savaş, VORTEKS, mağaza, modlar, çizgi roman). App Store 6.9" için de kabul eder.
+- `store/screenshots/` v31 mağaza görselleri: `phone_tr`, `phone_en` (2796x1290, iPhone 6,9") ve `ipad_tr`, `ipad_en` (2732x2048, iPad 13"), 8'er adet, yazılı ve renkli.
+- `store/MAGAZA_METINLERI.md` ad, alt başlık, tanıtım, açıklama, anahtar kelime ve yenilikler (TR + EN).
 - Eski kurye oyununun paketi `../app_lootback_eski/` klasöründe duruyor, kullanılmıyor.
 
 ## Yayına çıkmak için adımlar (bir geliştirici, Mac ile 1-2 gün)
-1. Mac'e Xcode ve Node 20 kur. Bu klasörde: `npm install`, `npx cap add ios`, `sh tools/ios_setup.sh`, `npm run sync`.
+1. Mac'e Xcode ve Node 20 kur. Bu klasörde: `npm install`, `npx cap add ios`, `ADMOB_APP_ID=ca-app-pub-...~... sh tools/ios_setup.sh`, `npm run sync`.
+   AdMob: admob.google.com'da uygulamayı ekle, bir **Ödüllü (Rewarded)** reklam birimi aç. Uygulama kimliğini (`~` olan) yukarıdaki komuta, reklam birimi kimliğini (`/` olan) `www/native-bridge.js` içindeki `AD_UNIT` satırına yaz. Şu an Google'ın test kimlikleri duruyor: test reklamı gösterir, para kazandırmaz.
 2. Apple Developer hesabı (yıllık 99 $), Flix şirketi adına. App Store Connect'te yeni uygulama: paket kimliği `com.flixtoys.arkana`.
 3. App Store Connect > Uygulama İçi Satın Alma bölümünde aşağıdaki 17 ürünü **aynı kimliklerle** oluştur. Oyun fiyatları mağazadan okur, Türkiye'de TL gösterir.
 4. Xcode'da `ios/App` projesini aç, Signing'de ekibi seç, Capabilities'e "In-App Purchase" ekle. App ikonunu `store/icon-1024.png` ile değiştir.
@@ -40,7 +42,7 @@ Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır
 | bundle_adv | Tüketilemez | 9,99 $ | Lav Vadisi, Buz Çağı ve Deprem Şehri haritaları + 8.000 altın + 700 elmas |
 | bundle_legend | Tüketilemez | 19,99 $ | KICK, FLICK ve 3 Mythic kostüm + 20.000 altın + 1.500 elmas |
 | bundle_god | Tüketilemez | 49,99 $ | KICK, FLICK ve 3 Godlike kostüm + 50.000 altın + 4.000 elmas |
-| noads | Tüketilemez | 2,99 $ | Reklamsız + VIP: günlük hediye 2 katı |
+| noads | Tüketilemez | 2,99 $ | Reklamsız VIP: ölünce reklamsız devam + günlük hediye 2 katı |
 
 Oyun içi ekonomi iki para birimiyle çalışır. Altın her koşudan (yenilen düşman, dalga, patron, toplanan Flix'ler) ve günlük hediyeden gelir; kahramanlar (KICK 2.500, FLICK 4.000), Common-Legendary kostümler, yol arkadaşları ve haritalar altınla açılır. Elmas patron yenince, her 10 dalgada, hikayeyi bitirince (+120) ve günlük hediyeyle gelir; Mythic (1.200 💎) ve Godlike (6.500 💎) kostümler elmasla açılır, elmas altına da çevrilebilir. Kostüm nadirlikleri: Common, Rare, Epic, Legendary, Mythic, Godlike. Hiçbir şey sadece parayla açılmaz; para yalnızca hızlandırır. Oyunda şu an reklam yok; "Reklamsız + VIP" bugün günlük hediyeyi 2 katına çıkarır, reklam eklenirse onları da kapatır. App Store incelemesinde reklamsız oyunda "reklamsız" satmak sorun çıkarabilir: reklam eklenene kadar ürünün mağaza adını "VIP" yapmak daha güvenli.
 
@@ -67,7 +69,8 @@ New York'ta yarıklar açıldı ve Kıyamet Lordu'nun ordusu sokaklara döküld�
 • FLIX, KICK ve FLICK: 3 kahraman, her birine Common'dan Godlike'a 9 kostüm. 8 yol arkadaşı, 11 harita.
 • Hikayede arada açtığın diğer kahramanlar yardıma koşar.
 • Güçlü vuruş hissi: titreşim, parlamalar, ekran sarsıntısı.
-• Reklam yok.
+• Zorluk seçimi: Kolay, Orta, Zor, Çok Zor.
+• Ölünce bir kez reklam izleyip kaldığın yerden devam et (VIP'te reklamsız).
 
 **Anahtar kelimeler:** kahraman, hayatta kalma, aksiyon, zombi, iskelet, robot, roguelike, flix, şehir, patron
 
@@ -86,12 +89,18 @@ Rifts have torn open across New York and the Doom Lord's army is pouring into th
 • FLIX, KICK and FLICK: 3 heroes with 9 skins each, from Common to Godlike. 8 companions, 11 maps.
 • In story mode your other unlocked heroes sometimes drop in to help.
 • Punchy hit feel: haptics, flashes, screen shake.
-• No ads.
+• Pick your difficulty: Easy, Normal, Hard, Very Hard.
+• Fell? Watch one short ad to get back up, once per run (VIP skips the ad).
 
 ## Gizlilik politikası (yayınlanacak metin)
-ARKANA (Flix) hesap oluşturmaz; ad, e-posta, konum veya reklam kimliği toplamaz. Oyun ilerlemesi yalnızca cihazınızda saklanır. Uygulama içi satın alımlar Apple App Store tarafından işlenir; ödeme bilgilerinizi görmeyiz. Oyunda reklam ve analiz aracı yoktur. İletişim: flixtoysofficial.com.
+ARKANA (Flix) hesap oluşturmaz; ad, e-posta veya konum istemez. Oyun ilerlemesi yalnızca cihazınızda saklanır. Uygulama içi satın alımlar Apple App Store tarafından işlenir; ödeme bilgilerinizi görmeyiz.
 
-App Store "Uygulama Gizliliği" bölümünde: **Veri toplanmıyor** seçilebilir.
+Oyunda yalnızca isteğe bağlı ödüllü reklam vardır (ölünce "reklam izle, devam et"). Reklamlar Google AdMob tarafından gösterilir. AdMob, reklam göstermek ve ölçmek için cihaz reklam kimliğini (IDFA, yalnızca izin verirseniz), yaklaşık konumu (IP'den) ve reklam etkileşimlerini kullanabilir. iPhone'da "Uygulamanın takip etmesine izin ver" sorusuna Hayır derseniz kişiselleştirilmemiş reklam gösterilir. Ayrıntı: https://policies.google.com/technologies/ads. İletişim: flixtoysofficial.com.
+
+App Store "Uygulama Gizliliği" bölümünde (AdMob nedeniyle) şunları işaretle:
+- **Tanımlayıcılar > Cihaz Kimliği**: Üçüncü taraf reklamcılık, kullanıcıya bağlı değil, takip için kullanılıyor.
+- **Konum > Yaklaşık Konum**: Üçüncü taraf reklamcılık, kullanıcıya bağlı değil.
+- **Kullanım Verileri > Reklam Verileri** ve **Tanılama > Kilitlenme / Performans Verileri**: Üçüncü taraf reklamcılık / Analiz, kullanıcıya bağlı değil.
 
 ## Lisanslar
 three.js (MIT), Fredoka ve Bangers yazı tipleri (SIL Open Font License). Hepsi ticari kullanıma açık.
