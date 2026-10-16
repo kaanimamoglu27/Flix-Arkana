@@ -6,13 +6,16 @@ Bu klasör ARKANA'yı iPhone (ve istersen Android) uygulamasına çeviren hazır
 - `www/index.html` oyunun kendisi. Elle düzenleme: web sürümü (`../arkana10.html`) değişince `python3 tools/build_www.py` çalıştır, bu dosyayı yeniden üretir ve dış bağlantı kalmadığını kontrol eder.
 - `www/native-bridge.js` gerçek satın alma (App Store / Google Play), ödüllü reklam (AdMob) ve titreşim bağlantısı. Web'de hiçbir şey yapmaz; web'de reklam yerine 5 saniyelik Flix kartı çıkar.
 - `capacitor.config.json` uygulama kimliği `com.flixtoys.arkana`, adı ARKANA.
-- `tools/ios_setup.sh` iOS projesini yatay ekrana kilitler, durum çubuğunu gizler, şifreleme sorusunu kapatır, AdMob kimliğini ve izin metnini ekler.
+- `tools/ios_setup.py` iOS projesini yatay ekrana kilitler, durum çubuğunu gizler, şifreleme sorusunu kapatır, AdMob kimliklerini, ikonu ve açılış ekranını ekler (Mac, Linux ve GitHub Actions'ta çalışır).
+- `tools/minify.js` oyun kodunu küçültür (`npm run build` ikisini birlikte çalıştırır).
+- Capacitor 8. iOS projesi repoda tutulmaz; `npx cap add ios --packagemanager CocoaPods` ile üretilir. Derleme ve TestFlight'a yükleme GitHub Actions'ta: `.github/workflows/ios-testflight.yml` (adımlar YUKLEME_REHBERI.md 2. bölümde).
 - `store/icon-1024.png` uygulama ikonu (oyundaki FLIX karakterinden). İstersen tasarımcı son halini çizebilir.
 - `store/screenshots/` v31 mağaza görselleri: `phone_tr`, `phone_en` (2796x1290, iPhone 6,9") ve `ipad_tr`, `ipad_en` (2732x2048, iPad 13"), 8'er adet, yazılı ve renkli.
 - `store/MAGAZA_METINLERI.md` ad, alt başlık, tanıtım, açıklama, anahtar kelime ve yenilikler (TR + EN).
 - Eski kurye oyununun paketi `../app_lootback_eski/` klasöründe duruyor, kullanılmıyor.
 
-## Yayına çıkmak için adımlar (bir geliştirici, Mac ile 1-2 gün)
+## Yayına çıkmak için adımlar
+Mac'siz yol (önerilen): YUKLEME_REHBERI.md 2. bölüm. Aşağıdaki liste Mac'le elle derleme içindir.
 1. Mac'e Xcode ve Node 20 kur. Bu klasörde: `npm install`, `npx cap add ios`, `ADMOB_APP_ID=ca-app-pub-...~... sh tools/ios_setup.sh`, `npm run sync`.
    AdMob: admob.google.com'da uygulamayı ekle, bir **Ödüllü (Rewarded)** reklam birimi aç. Uygulama kimliğini (`~` olan) yukarıdaki komuta, reklam birimi kimliğini (`/` olan) `www/native-bridge.js` içindeki `AD_UNIT` satırına yaz. Şu an Google'ın test kimlikleri duruyor: test reklamı gösterir, para kazandırmaz.
 2. Apple Developer hesabı (yıllık 99 $), Flix şirketi adına. App Store Connect'te yeni uygulama: paket kimliği `com.flixtoys.arkana`.

@@ -2,7 +2,7 @@
 
 Oyun hazır: `app/` klasörü iPhone/iPad uygulamasına dönüşecek her şeyi içeriyor (oyun, internetsiz çalışan dosyalar, ikon, iPhone ve iPad için Türkçe ve İngilizce 8'er mağaza görseli, mağaza metinleri, satın alma kimlikleri, ödüllü reklam bağlantısı). Aynı klasör GitHub'da da var: `kaanimamoglu27/Flix-Arkana` reposunun `app/` klasörü.
 
-Yükleme 4 parçadan oluşur: **hesap**, **reklam hesabı (AdMob)**, **uygulamayı derleme**, **App Store Connect'te sayfayı doldurup incelemeye gönderme**.
+Yükleme 4 parçadan oluşur: **hesap**, **reklam hesabı (AdMob)**, **uygulamayı derleme (GitHub'da, Mac gerekmez)**, **App Store Connect'te sayfayı doldurup incelemeye gönderme**.
 
 ## 1b. AdMob reklam hesabı (sen yapmalısın, 15 dakika)
 
@@ -10,7 +10,7 @@ Yükleme 4 parçadan oluşur: **hesap**, **reklam hesabı (AdMob)**, **uygulamay
 1. https://admob.google.com adresinde Google hesabınla AdMob hesabı aç, ödeme bilgilerini gir.
 2. **Uygulamalar > Uygulama ekle > iOS**, adı ARKANA. Çıkan **uygulama kimliği** `ca-app-pub-...~...` şeklindedir.
 3. Bu uygulamada **Reklam birimi ekle > Ödüllü (Rewarded)**. Çıkan **reklam birimi kimliği** `ca-app-pub-.../...` şeklindedir.
-4. İki kimliği geliştiriciye (ya da bana) ver. Uygulama kimliği `tools/ios_setup.sh` komutuna, reklam birimi `www/native-bridge.js` içindeki `AD_UNIT` satırına girer. Şu an Google'ın test kimlikleri duruyor: test reklamı gösterir, para kazandırmaz.
+4. İki kimliği aşağıdaki 2d adımında GitHub'a `ADMOB_APP_ID` ve `ADMOB_REWARDED_ID` olarak gir. Girilmezse Google'ın test kimlikleri kullanılır: test reklamı gösterir, para kazandırmaz.
 5. App Store'da yayına çıkınca AdMob'da uygulamayı mağaza sayfasına bağla.
 
 ---
@@ -24,33 +24,45 @@ Yükleme 4 parçadan oluşur: **hesap**, **reklam hesabı (AdMob)**, **uygulamay
    - Öneri: marka için **Şirket** hesabı.
 3. Onay gelince https://appstoreconnect.apple.com adresine gir. **Anlaşmalar, Vergi ve Bankacılık** bölümünde "Ücretli Uygulamalar" anlaşmasını imzala, banka ve vergi bilgilerini gir. Bu olmadan uygulama içi satın alma çalışmaz.
 
-## 2. Uygulamayı derleme (Mac gerekir; yoksa bir geliştiriciye ver)
+## 2. Uygulamayı derleme ve yükleme (Mac GEREKMEZ)
 
-Bu adım Xcode ister, Xcode sadece Mac'te çalışır. Üç yol var:
+Derleme GitHub'ın bulut Mac'lerinde yapılır (Flix-Arkana reposu herkese açık olduğu için ücretsiz). Senin yapacağın: 4 bilgiyi GitHub'a bir kez girmek, sonra bir düğmeye basmak.
 
-| Yol | Kime uygun | Maliyet |
-|---|---|---|
-| Kendi Mac'in | Mac'in varsa | Ücretsiz |
-| Serbest çalışan iOS/Capacitor geliştirici | Mac yoksa, en kolayı | Genelde 1 günlük iş |
-| Bulutta derleme (Codemagic, Ionic Appflow) | Mac yoksa, kendin yapmak istersen | Ücretsiz kotalar var |
+**a) Uygulama kimliğini kaydet (5 dk)**
+1. https://developer.apple.com/account > **Certificates, Identifiers & Profiles > Identifiers > +**
+2. **App IDs > App**, Description: `ARKANA`, Bundle ID **Explicit**: `com.flixtoys.arkana`. Kaydet. (In-App Purchase kendiliğinden açık gelir.)
 
-Geliştiriciye vereceğin tek şey bu klasör ve şu cümle: *"Capacitor 6 projesi, README'deki adımlarla iOS'a derle, TestFlight'a yükle."*
+**b) App Store Connect'te uygulamayı aç (5 dk)**: aşağıdaki 3. bölümün 1. adımı (Yeni Uygulama). Yükleme bu kayıt olmadan kabul edilmez.
 
-Mac'te adımlar (Terminal'de, `app` klasörünün içinde):
+**c) API anahtarı oluştur (5 dk)**
+1. https://appstoreconnect.apple.com > **Kullanıcılar ve Erişim > Entegrasyonlar > App Store Connect API > Ekip Anahtarları > +**
+2. Ad: `GitHub`, Erişim: **Yönetici (Admin)**. Oluştur.
+3. **API Anahtarını İndir** (.p8 dosyası, sadece bir kez indirilebilir). Sayfadaki **Anahtar Kimliği (Key ID)** ve üstteki **Issuer ID**'yi not al.
+4. **Team ID**: https://developer.apple.com/account > Membership details > Team ID (10 karakter).
 
-```
-npm install
-npx cap add ios
-ADMOB_APP_ID=ca-app-pub-XXXX~YYYY sh tools/ios_setup.sh
-npm run sync
-npx cap open ios
-```
+**d) Bilgileri GitHub'a gir (5 dk)**
+https://github.com/kaanimamoglu27/Flix-Arkana > **Settings > Secrets and variables > Actions > New repository secret**. Şu isimlerle ekle:
 
-Xcode açılınca:
-1. Sol üstte **App** projesine tıkla. **Signing & Capabilities** sekmesinde Team olarak Apple hesabını seç.
-2. **+ Capability** ile **In-App Purchase** ekle.
-3. **Assets > AppIcon** içine `store/icon-1024.png` dosyasını sürükle.
-4. Üst menüden **Product > Archive**. Bitince **Distribute App > App Store Connect > Upload**.
+| İsim | Değer |
+|---|---|
+| `ASC_KEY_ID` | Key ID |
+| `ASC_ISSUER_ID` | Issuer ID |
+| `ASC_KEY_P8` | .p8 dosyasını metin editörüyle aç, içindeki her şeyi (BEGIN ve END satırları dahil) yapıştır |
+| `APPLE_TEAM_ID` | Team ID |
+| `ADMOB_APP_ID` | (isteğe bağlı) AdMob uygulama kimliği `ca-app-pub-...~...` |
+| `ADMOB_REWARDED_ID` | (isteğe bağlı) AdMob ödüllü reklam birimi `ca-app-pub-.../...` |
+
+AdMob kimlikleri boş kalırsa Google'ın test reklamı çıkar (para kazandırmaz). Yayından önce gerçeklerini girmen iyi olur; kod değiştirmeye gerek yok.
+
+**e) Yükle**
+1. Repoda **Actions > iOS TestFlight > Run workflow**. Sürüm `1.0` kalsın, **Run workflow**.
+2. 15-25 dakika sürer. Yeşil tik çıkınca derleme App Store Connect'e gitmiştir; Apple işledikten sonra (10-30 dk) **TestFlight** sekmesinde görünür.
+3. Kırmızı çarpı çıkarsa hatanın linkini buraya at, düzeltirim.
+4. Sonraki güncellemelerde sadece e) adımını tekrarla (sürümü 1.1, 1.2 diye artır). Derleme numarası kendiliğinden artar.
+
+Her değişiklikte ayrıca **iOS build check** adlı kontrol kendiliğinden çalışır: Xcode projesinin derlendiğini gösterir, hiçbir şey yüklemez.
+
+**Mac'in olursa** (isteğe bağlı, aynı sonuç): `app` klasöründe `npm install`, `npx cap add ios --packagemanager CocoaPods`, `python3 tools/ios_setup.py`, `npx cap open ios`; Xcode'da Team seç, **Product > Archive > Distribute App**.
 
 ## 3. App Store Connect'te uygulama sayfası
 
@@ -70,8 +82,8 @@ Xcode açılınca:
 4. **Uygulama Gizliliği**: reklam olduğu için artık "Veri toplanmıyor" seçilemez. `app/README.md` içindeki "Gizlilik politikası" bölümünde neyin işaretleneceği yazıyor (Cihaz Kimliği, Yaklaşık Konum, Reklam Verileri, Tanılama). Politika metnini flixtoysofficial.com'da bir sayfaya koy ve linkini gir. Oyun açılışta iPhone'un "takip izni" sorusunu sorar; Apple bunu ister.
 5. **Yaş derecelendirmesi**: "Çizgi film veya fantastik şiddet: Seyrek/Hafif" seç. Sonuç 9+ olur.
 6. **Sürüm sayfası**:
+   - Görsellerin hepsi tek sayfada: https://claude.ai/artifact/WGVXMaiC9H4rnMSnzuFDjX (dokun, tam boyut açılır, uzun basıp kaydet).
    - **Kullanılacak set (çizgi roman tarzı):** İngilizce sayfaya `store/cizgi_roman/en/iphone_6.9/` ve `en/ipad_13/`, Türkçe sayfaya `store/cizgi_roman/tr/...` içindeki 7'şer görsel, sırayla. Uygulama ikonu: `store/icon-1024.png` (= `cizgi_roman/icon-1024.png`). Kapak: `cizgi_roman/kapak_en_3840x2160.png`. Açılış ekranı: `cizgi_roman/acilis_ekrani_2732.png`. Eski 3D tarzı set `store/pro_en/` içinde yedek.
-   - Ekran görüntüleri: iPhone "6,9 inç" bölümüne `store/screenshots/phone_tr/` (Türkçe) ve `phone_en/` (İngilizce), iPad "13 inç" bölümüne `ipad_tr/` ve `ipad_en/` içindeki 8'er görseli sırayla yükle.
    - Ad, alt başlık, tanıtım metni, açıklama, anahtar kelimeler ve yenilikler: `store/MAGAZA_METINLERI.md` dosyasından kopyala (Türkçe ve İngilizce hazır, karakter sınırlarına uygun).
    - Destek URL'si: flixtoysofficial.com.
    - Kategori: Oyunlar > Aksiyon. İkinci kategori: Oyunlar > Arcade.
