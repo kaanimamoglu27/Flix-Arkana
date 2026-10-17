@@ -15,6 +15,8 @@ s = re.sub(r'<link href="https://fonts.googleapis.com[^>]*>', '<style>'
   '</style>', s)
 s = s.replace('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>', '<script src="three.min.js"></script>\n<script src="three-post.js"></script>\n<script src="native-bridge.js"></script>')
 s = re.sub(r'<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/[^"]*"></script>\s*', '', s)
+# the web page's CDN fallback for three.js is not needed in the app (three.js is bundled)
+s = re.sub(r'<script>window\.THREE \|\| document\.write\(.*?</script>\s*', '', s)
 left = re.findall(r'(?:src|href)="(https?://[^"]+)"', s)
 if left: sys.exit('external resources still referenced: %s' % left)
 (app / 'www' / 'index.html').write_text(s)
