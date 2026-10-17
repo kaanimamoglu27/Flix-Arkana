@@ -4,7 +4,7 @@ Swaps the CDN scripts and Google Fonts for local copies so the app works offline
 and passes App Store review without network dependencies, and loads native-bridge.js."""
 import re, sys, pathlib
 app = pathlib.Path(__file__).resolve().parent.parent
-src = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else app.parent / 'arkana10.html'
+src = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else app.parent / 'index.html'
 s = src.read_text()
 s = re.sub(r'<link rel="preconnect"[^>]*>\s*', '', s)
 s = re.sub(r'<link href="https://fonts.googleapis.com[^>]*>', '<style>'
