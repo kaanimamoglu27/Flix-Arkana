@@ -32,9 +32,8 @@ PATRONLAR
 
 5 MOD
 • Hikaye: 40 seviyelik çizgi roman macerası.
-• Sonsuz: her 10 dalgada düşmanlar %10 güçlenir. Ne kadar dayanabilirsin?
+• Sonsuz: 15. dalgadan sonra düşmanlar her 10 dalgada %10 güçlenir, her 5 dalgada çoğalır. Ne kadar dayanabilirsin?
 • Patron Koşusu, Flix Avı ve Cehennem.
-• 4 zorluk: Kolay, Orta, Zor, Çok Zor.
 
 ŞEHRİNİ SEÇ
 • 11 harita: neon gece, karlı kış, retro dalga, şeker şehir...
@@ -53,8 +52,8 @@ Gerçek Flix oyuncakları: flixtoysofficial.com
 **Anahtar kelimeler (100):** hayatta kalma,aksiyon,zombi,iskelet,roguelike,kahraman,flix,patron,dalga,çizgi roman,arcade
 
 **Bu sürümdeki yenilikler:**
-• Zorluk seçimi: Kolay, Orta, Zor, Çok Zor.
-• Sonsuz mod her 10 dalgada zorlaşır.
+• Herkes için tek, dengeli zorluk.
+• Sonsuz mod 15. dalgadan sonra adım adım zorlaşır.
 • Deprem Şehri'nde artık yer yarılıyor.
 • Ölünce bir kez devam etme hakkı.
 • Daha akıcı oynanış: kalabalık sahnelerde ve seviye atlarken takılmalar giderildi.
@@ -86,9 +85,8 @@ BOSSES
 
 5 MODES
 • Story: a 40-level comic-book adventure.
-• Endless: enemies get 10% stronger every 10 waves. How long can you last?
+• Endless: after wave 15 enemies get 10% stronger every 10 waves and more numerous every 5. How long can you last?
 • Boss Rush, Flix Hunt and Hell.
-• 4 difficulties: Easy, Normal, Hard, Very Hard.
 
 PICK YOUR CITY
 • 11 maps: neon night, snowy winter, retro wave, candy city...
@@ -107,8 +105,8 @@ Real Flix toys: flixtoysofficial.com
 **Keywords (100):** survival,action,zombie,skeleton,roguelike,hero,flix,boss,waves,comic,arcade,horde
 
 **What's new:**
-• Choose your difficulty: Easy, Normal, Hard, Very Hard.
-• Endless mode ramps up every 10 waves.
+• One balanced difficulty for everyone.
+• Endless mode ramps up step by step after wave 15.
 • The ground now splits open in Quake City.
 • One second chance per run.
 • Smoother play: no more hitches in crowded fights or on level-up.
