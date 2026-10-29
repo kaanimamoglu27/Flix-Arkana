@@ -9,7 +9,7 @@ Ekran görüntüleri:
 
 ## Türkçe (Türkiye)
 
-**Ad (30):** ARKANA: Flix Kahramanları
+**Ad (30):** Flix Arkana
 
 **Alt başlık (30):** Kıyamet ordusuna tek kahraman
 
@@ -62,7 +62,7 @@ Gerçek Flix oyuncakları: flixtoysofficial.com
 
 ## English (U.S.)
 
-**Name (30):** ARKANA: Flix Heroes
+**Name (30):** Flix Arkana
 
 **Subtitle (30):** One hero vs. the doom army
 

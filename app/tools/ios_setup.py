@@ -4,7 +4,7 @@
 - declares no non-exempt encryption (skips the export-compliance question on every upload)
 - lets ProMotion iPhones run at 120 Hz
 - AdMob app id (env ADMOB_APP_ID, Google's TEST id if unset) + tracking prompt text + SKAdNetwork id
-- copies the app icon (store/icon-1024.png) and launch screen (store/cizgi_roman/acilis_ekrani_2732.png)
+- copies the app icon (store/icon-1024.png) and launch screen (store/acilis_ekrani.png, the FLIX TOYS presents screen)
 - env ADMOB_REWARDED_ID sets the real rewarded ad unit (Google's TEST unit if unset)
 - optional env BUILD_NUMBER / APP_VERSION set the build number and version shown in the App Store"""
 import json, os, plistlib, subprocess, pathlib, re, shutil
@@ -20,14 +20,14 @@ pl['UIStatusBarHidden'] = True
 pl['UIViewControllerBasedStatusBarAppearance'] = False
 pl['ITSAppUsesNonExemptEncryption'] = False
 pl['CADisableMinimumFrameDurationOnPhone'] = True
-pl['CFBundleDisplayName'] = 'ARKANA'
+pl['CFBundleDisplayName'] = 'Flix Arkana'
 pl['GADApplicationIdentifier'] = os.environ.get('ADMOB_APP_ID') or 'ca-app-pub-3940256099942544~1458002511'
 pl['NSUserTrackingUsageDescription'] = 'Reklamları sana daha uygun göstermek için kullanılır. Hayır dersen oyun aynı şekilde çalışır.'
 pl['SKAdNetworkItems'] = [{'SKAdNetworkIdentifier': 'cstr6suwn9.skadnetwork'}]
 with open(pl_path, 'wb') as f: plistlib.dump(pl, f)
 xc = ios / 'App' / 'Assets.xcassets'
 shutil.copy(app / 'store' / 'icon-1024.png', xc / 'AppIcon.appiconset' / 'AppIcon-512@2x.png')
-splash = app / 'store' / 'cizgi_roman' / 'acilis_ekrani_2732.png'
+splash = app / 'store' / 'acilis_ekrani.png'
 if splash.exists():
     # one compressed launch image instead of three 4.5 MB copies (keeps the app download small)
     si = xc / 'Splash.imageset'

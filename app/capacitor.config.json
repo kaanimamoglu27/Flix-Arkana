@@ -1,12 +1,12 @@
 {
   "appId": "com.flixtoys.arkana",
-  "appName": "ARKANA",
+  "appName": "Flix Arkana",
   "webDir": "www",
-  "backgroundColor": "#0d0a1a",
+  "backgroundColor": "#05040c",
   "ios": {
     "contentInset": "never",
     "scrollEnabled": false,
-    "backgroundColor": "#0d0a1a",
+    "backgroundColor": "#05040c",
     "webContentsDebuggingEnabled": false,
     "preferredContentMode": "mobile",
     "allowsLinkPreview": false
