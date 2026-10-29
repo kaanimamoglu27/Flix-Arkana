@@ -62,7 +62,7 @@ AdMob kimlikleri boş kalırsa Google'ın test reklamı çıkar (para kazandırm
 
 Her değişiklikte ayrıca **iOS build check** adlı kontrol kendiliğinden çalışır: Xcode projesinin derlendiğini gösterir, hiçbir şey yüklemez.
 
-**Mac'in olursa** (isteğe bağlı, aynı sonuç): `app` klasöründe `npm install`, `npx cap add ios --packagemanager CocoaPods`, `python3 tools/ios_setup.py`, `npx cap open ios`; Xcode'da Team seç, **Product > Archive > Distribute App**.
+**Mac'in olursa** (isteğe bağlı, aynı sonuç): `app` klasöründe `export APPLE_TEAM_ID=...` sonra `./ios.sh yukle 1.0`. Simülatörde denemek için `./ios.sh simulator`. Terminalden Mac'siz yükleme: `gh workflow run ios-testflight.yml -R kaanimamoglu27/Flix-Arkana -f version=1.0`. Üç oyunun ortak rehberi: [../TESTFLIGHT_REHBERI.md](../TESTFLIGHT_REHBERI.md).
 
 ## 3. App Store Connect'te uygulama sayfası
 
