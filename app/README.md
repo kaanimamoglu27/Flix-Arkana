@@ -47,7 +47,9 @@ Mac'siz yol (önerilen): YUKLEME_REHBERI.md 2. bölüm. Aşağıdaki liste Mac'l
 | bundle_god | Tüketilemez | 49,99 $ | KICK, FLICK ve 3 Godlike kostüm + 50.000 altın + 4.000 elmas |
 | noads | Tüketilemez | 2,99 $ | Reklamsız VIP: ölünce reklamsız devam + günlük hediye 2 katı |
 
-Oyun içi ekonomi iki para birimiyle çalışır. Altın her koşudan (yenilen düşman, dalga, patron, toplanan Flix'ler) ve günlük hediyeden gelir; kahramanlar (KICK 2.500, FLICK 4.000), Common-Legendary kostümler, yol arkadaşları ve haritalar altınla açılır. Elmas patron yenince, her 10 dalgada, hikayeyi bitirince (+120) ve günlük hediyeyle gelir; Mythic (1.200 💎) ve Godlike (6.500 💎) kostümler elmasla açılır, elmas altına da çevrilebilir. Kostüm nadirlikleri: Common, Rare, Epic, Legendary, Mythic, Godlike. Hiçbir şey sadece parayla açılmaz; para yalnızca hızlandırır. Oyunda şu an reklam yok; "Reklamsız + VIP" bugün günlük hediyeyi 2 katına çıkarır, reklam eklenirse onları da kapatır. App Store incelemesinde reklamsız oyunda "reklamsız" satmak sorun çıkarabilir: reklam eklenene kadar ürünün mağaza adını "VIP" yapmak daha güvenli.
+Oyun içi ekonomi iki para birimiyle çalışır. Altın her koşudan (yenilen düşman, dalga, patron, toplanan Flix'ler) ve günlük hediyeden gelir; kahramanlar (KICK 2.500, FLICK 4.000), Common-Legendary kostümler, yol arkadaşları ve haritalar altınla açılır. Elmas patron yenince, her 10 dalgada, hikayeyi bitirince (+120) ve günlük hediyeyle gelir; Mythic (1.200 💎) ve Godlike (6.500 💎) kostümler elmasla açılır, elmas altına da çevrilebilir. Kostüm nadirlikleri: Common, Rare, Epic, Legendary, Mythic, Godlike. Hiçbir şey sadece parayla açılmaz; para yalnızca hızlandırır. Oyundaki tek reklam, ölünce isteğe bağlı "reklam izle, devam et" ödüllü reklamıdır (her koşuda bir kez). "Reklamsız + VIP" bu reklamı atlatır ve günlük hediyeyi 2 katına çıkarır.
+
+Satın almalar: her ödenmiş işlem oyuna `FlixGrant` ile tek bir kez verilir (işlem kimliğiyle çift verme engellenir). Uygulama ödeme sırasında kapanırsa, "Satın almayı sor" (aile) onayı sonradan gelirse ya da bağlantı yavaşsa satın alma bir sonraki açılışta yine verilir. Mağazada fiyatlar App Store'dan okunur (Türkiye'de TL).
 
 Not: satın alma şu an telefonun içinde onaylanıyor. İleride hileyi azaltmak için sunucu doğrulaması (ör. RevenueCat) eklenebilir.
 
@@ -72,7 +74,7 @@ New York'ta yarıklar açıldı ve Kıyamet Lordu'nun ordusu sokaklara döküld�
 • FLIX, KICK ve FLICK: 3 kahraman, her birine Common'dan Godlike'a 9 kostüm. 8 yol arkadaşı, 11 harita.
 • Hikayede arada açtığın diğer kahramanlar yardıma koşar.
 • Güçlü vuruş hissi: titreşim, parlamalar, ekran sarsıntısı.
-• Zorluk seçimi: Kolay, Orta, Zor, Çok Zor.
+• Herkes için tek, dengeli zorluk; Sonsuz mod 15. dalgadan sonra adım adım zorlaşır.
 • Ölünce bir kez reklam izleyip kaldığın yerden devam et (VIP'te reklamsız).
 
 **Anahtar kelimeler:** kahraman, hayatta kalma, aksiyon, zombi, iskelet, robot, roguelike, flix, şehir, patron
@@ -92,7 +94,7 @@ Rifts have torn open across New York and the Doom Lord's army is pouring into th
 • FLIX, KICK and FLICK: 3 heroes with 9 skins each, from Common to Godlike. 8 companions, 11 maps.
 • In story mode your other unlocked heroes sometimes drop in to help.
 • Punchy hit feel: haptics, flashes, screen shake.
-• Pick your difficulty: Easy, Normal, Hard, Very Hard.
+• One balanced difficulty for everyone; Endless ramps up step by step after wave 15.
 • Fell? Watch one short ad to get back up, once per run (VIP skips the ad).
 
 ## Gizlilik politikası (yayınlanacak metin)

@@ -27,7 +27,11 @@
       ...NON_CONSUMABLE.map(id => ({id, type: ProductType.NON_CONSUMABLE, platform}))
     ]);
     // Receipts are checked on the device. For stronger anti-cheat add a server validator (e.g. RevenueCat or iaptic) via S.validator.
-    S.when().approved(t => t.verify()).verified(r => r.finish()).finished(t => { for (const p of t.products) settle(p.id, true); });
+    // every paid transaction is handed to the game (FlixGrant skips ones it already gave), then finished.
+    // This also covers purchases that complete later: app closed mid-payment, "Ask to Buy", slow networks.
+    S.when().approved(t => t.verify()).verified(r => r.finish())
+      .finished(t => { for (const p of t.products) { try { if (window.FlixGrant) window.FlixGrant(p.id, t.transactionId || null); } catch (e) {} settle(p.id, true); } })
+      .productUpdated(() => { try { if (window.onStorePrices) window.onStorePrices(); } catch (e) {} });
     S.error(e => { console.warn('store error', e); for (const id in pending) settle(id, false); });
     S.initialize([platform]);
     store = S;
