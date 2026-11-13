@@ -6,7 +6,7 @@ on:
     branches: [ipad-test]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   ipad:
@@ -98,6 +98,16 @@ jobs:
             sleep 8
             t 120 xcrun simctl io "$UDID" screenshot "$GITHUB_WORKSPACE/shots/$stage-b.png"
           done
+      - name: Save screenshots to the ipad-shots branch
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -e
+          ls shots/*.png >/dev/null 2>&1 || { echo no screenshots; exit 0; }
+          D=$RUNNER_TEMP/out; rm -rf $D; mkdir -p $D; cp shots/*.png $D/
+          cd $D; git init -q -b ipad-shots; git add .
+          git -c user.name=ipad-test -c user.email=ipad-test@users.noreply.github.com commit -q -m "iPad screenshots run ${{ github.run_id }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ipad-shots
       - uses: actions/upload-artifact@v4
         if: always()
         with:
