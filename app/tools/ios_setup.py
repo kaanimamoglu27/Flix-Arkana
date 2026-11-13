@@ -5,7 +5,7 @@
 - lets ProMotion iPhones run at 120 Hz
 - AdMob app id (env ADMOB_APP_ID, Google's TEST id if unset) + tracking prompt text + SKAdNetwork id
 - copies the app icon (store/icon-1024.png) and launch screen (store/acilis_ekrani.png, the FLIX TOYS presents screen)
-- env ADMOB_REWARDED_ID sets the real rewarded ad unit (Google's TEST unit if unset)
+- env ADMOB_REWARDED_ID / ADMOB_INTERSTITIAL_ID set the real ad units (ads-config.js value, else Google's TEST unit, if unset)
 - optional env BUILD_NUMBER / APP_VERSION set the build number and version shown in the App Store"""
 import json, os, plistlib, subprocess, pathlib, re, shutil
 app = pathlib.Path(__file__).resolve().parent.parent
@@ -51,11 +51,12 @@ if splash.exists():
             shutil.copy(splash, si / 'splash.png'); name = 'splash.png'
     (si / 'Contents.json').write_text(json.dumps({'images': [{'idiom': 'universal', 'filename': name}], 'info': {'author': 'xcode', 'version': 1}}, indent=2))
 # rewarded ad unit from the env (GitHub secret) goes into the app's copy of ads-config.js (www/ stays as it is)
-ad = (os.environ.get('ADMOB_REWARDED_ID') or '').strip()
 ac = ios / 'App' / 'public' / 'ads-config.js'
-if ad and ac.exists():
-    ac.write_text(re.sub(r"(\bIOS_REWARDED:\s*)'[^']*'", lambda m: m.group(1) + "'%s'" % ad.replace("'", ''), ac.read_text(encoding='utf-8')), encoding='utf-8')
-    print('rewarded ad unit set from env')
+for env, key in (('ADMOB_REWARDED_ID', 'IOS_REWARDED'), ('ADMOB_INTERSTITIAL_ID', 'IOS_INTERSTITIAL')):
+    ad = (os.environ.get(env) or '').strip()
+    if ad and ac.exists():
+        ac.write_text(re.sub(r"(\b%s:\s*)'[^']*'" % key, lambda m: m.group(1) + "'%s'" % ad.replace("'", ''), ac.read_text(encoding='utf-8')), encoding='utf-8')
+        print('%s set from env' % key)
 pbx = ios / 'App.xcodeproj' / 'project.pbxproj'
 s = pbx.read_text()
 if os.environ.get('BUILD_NUMBER'): s = re.sub(r'CURRENT_PROJECT_VERSION = [^;]+;', 'CURRENT_PROJECT_VERSION = %s;' % os.environ['BUILD_NUMBER'], s)

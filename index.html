@@ -2051,7 +2051,7 @@ function newRun(mode) {
   Object.assign(G, {
     recB: (save.bw && save.bw[mode]) || 0, recNew: false,
     wepPick: mode === 'hell' ? 3 : 0,
-    state: 'play', time: 0, wave: 1, waveT: 0, kills: 0, level: 1, xp: 0, xpNext: 5, hp: curHero().hp, maxHp: curHero().hp, px: 0, pz: 0, fx: 0, fz: 1, inv: 0, flix: 0,
+    revAd: false, state: 'play', time: 0, wave: 1, waveT: 0, kills: 0, level: 1, xp: 0, xpNext: 5, hp: curHero().hp, maxHp: curHero().hp, px: 0, pz: 0, fx: 0, fz: 1, inv: 0, flix: 0,
     enemies: [], shots: [], eshots: [], gems: [], items: [], tels: [], zaps: [], pools: [], grab: 0, paid: 0, spawnT: 1, weps: Object.assign({toss: 1, [curHero().start]: 1}, curHero().start2 ? {[curHero().start2]: 1} : {}), pas: {}, ws: {}, pending: mode === 'boss' ? 4 : mode === 'hell' ? 3 : 0, boss: null, endless: mode === 'endless' || mode === 'hell', mode, picks: [], score: 0, combo: 0, comboT: 0, flixGot: 0, runCoins: 0, riftO: null, riftT: 35, riftsClosed: 0, huntT: 240, bestCombo: 0,
     dmgMul: 1, hpBonus: 0, spdBonus: 0, cdBonus: 0, barr: [], fuses: [], carFires: [], traf: null, trafT: 12, dashT: 0, dashCd: 0, mines: [], torns: [], swipeFx: null, carsBlown: 0, comicQ: null, tier: 0, fis: [], revived: false, fell: false, rockets: [], slash: null, slam: null, gearFx: null, gunOn: false, toss: [], tq: [], bombs: [], whips: [], turrets: [], throwT: 0, aimT: 0, aimA: 0, epiT: 0, finalT: 0, bossKills: 0, paidG: 0, boosts: [], bst: null, bstT: 20, trail: [], camp: null,
     shake: 0, kx: 0, kz: 0, ult: null, beamOn: 0, hitstop: 0, slowT: 0, ally: null, allyIn: 0, allyCd: 2, allyId: null, compL: 1, comp: {kind: save.comp, x: 1.2, z: -1, t: 0, cd: 1, fa: 0}
@@ -2927,9 +2927,10 @@ function revive() {
   for (const b of G.eshots) b.life = 0; ringFx(G.px, G.pz, 9, 0xffd23f, 0.8); confetti(G.px, 2, G.pz, 60, 1.8); SFX.level(); G.shake = 0.6;
   banner('⭐ GERİ DÖNDÜN!', 'Tam can! Bu son şansındı.', 2.4);
 }
-$('bRevAd').onclick = () => { clearInterval(revTimer); if (save.noads) revive(); else playAd(ok => ok ? revive() : gameOver()); };
+$('bRevAd').onclick = () => { clearInterval(revTimer); if (save.noads) revive(); else { G.revAd = true; playAd(ok => ok ? revive() : gameOver()); } };
 $('bRevNo').onclick = () => { clearInterval(revTimer); gameOver(); };
 function gameOver(won) {
+  if (G.state !== 'over' && G.time >= INTER.minRunSec) INTER.runs++;
   G.state = 'over'; $('stickBase').classList.remove('on'); $('bPause').style.display = 'none';
   const best = G.wave > save.bestWave || (G.wave === save.bestWave && G.kills > save.bestKills);
   save.bestWave = Math.max(save.bestWave, G.wave); save.bestKills = Math.max(save.bestKills, G.kills); save.bestTime = Math.max(save.bestTime, Math.floor(G.time)); persist();
@@ -5143,8 +5144,25 @@ $('bPause').onclick = pause;
 $('bBag').onclick = e => { e.stopPropagation(); document.documentElement.classList.toggle('abOpen'); $('bBag').classList.remove('new'); try { save.abOpen = document.documentElement.classList.contains('abOpen'); persist(); } catch (_) {} };
 if (save.abOpen) document.documentElement.classList.add('abOpen');
 $('bResume').onclick = () => { hideScreens(); G.state = 'play'; };
-$('bQuit').onclick = toMenu; $('bMenu').onclick = toMenu;
-$('bAgain').onclick = () => newRun(G.mode);
+// interstitial between runs (app only, never during play, never for "Reklamsız + VIP" owners).
+// Shown only when leaving the result screen, and only if every rule below holds; an ad that is not loaded yet is skipped.
+const INTER = {
+  firstAfterRuns: 2,    // never after the first finished run
+  everyRuns: 2,         // at most every 2nd finished run
+  minGapMs: 180000,     // at least 3 minutes since the last one (and since launch)
+  minRunSec: 45,        // runs shorter than this don't count (quick quits)
+  runs: 0, lastRun: 0, last: Date.now(), busy: false
+};
+function leaveOver(fn) {
+  const F = window.FlixAds;
+  const ok = F && F.showInterstitial && G.state === 'over' && !save.noads && !G.revAd && !INTER.busy &&
+    INTER.runs >= INTER.firstAfterRuns && INTER.runs - INTER.lastRun >= INTER.everyRuns && Date.now() - INTER.last >= INTER.minGapMs;
+  if (!ok) { fn(); return; }
+  INTER.busy = true;
+  Promise.resolve(F.showInterstitial()).catch(() => false).then(shown => { INTER.busy = false; if (shown) { INTER.lastRun = INTER.runs; INTER.last = Date.now(); } fn(); });
+}
+$('bQuit').onclick = toMenu; $('bMenu').onclick = () => leaveOver(toMenu);
+$('bAgain').onclick = () => leaveOver(() => newRun(G.mode));
 $('bEndless').onclick = () => { for (const c of DOOM.civ) { c.play = false; c.t = 99; } G.epiT = 0; G.endless = true; G.state = 'play'; hideScreens(); $('bPause').style.display = 'block'; startWave(G.wave + 1); };
 function modesOpen() {
   const b = save.best || {};
@@ -5154,7 +5172,7 @@ function modesOpen() {
 }
 $('bPlay').onclick = () => { initAudio(); askMotion(); modesOpen(); };
 $('bModesBack').onclick = () => screen('menu');
-$('bShop').onclick = () => shopOpen('hero'); $('bShop2').onclick = () => { toMenu(); shopOpen('hero'); }; $('bShopDone').onclick = shopClose;
+$('bShop').onclick = () => shopOpen('hero'); $('bShop2').onclick = () => leaveOver(() => { toMenu(); shopOpen('hero'); }); $('bShopDone').onclick = shopClose;
 for (const b of document.querySelectorAll('#shopTabs button')) b.onclick = () => { SHOP.tab = b.dataset.t; shopDraw(); SFX.card(); };
 $('bHow').onclick = () => { screen('how'); $('bHowOk').onclick = () => screen('menu'); };
 let setFrom = 'menu';

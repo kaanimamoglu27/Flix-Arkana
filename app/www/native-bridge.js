@@ -3,7 +3,7 @@
    On the web this file does nothing and the store runs as a clearly marked demo.
    Inside the iOS / Android app it connects to:
      - cordova-plugin-purchase (CdvPurchase v13) for App Store / Google Play in-app purchases
-     - @capacitor-community/admob for the one rewarded ad after death ("watch an ad, keep playing")
+     - @capacitor-community/admob (via ads.js) for the rewarded revive and the paced interstitial between runs
      - @capacitor/haptics for hit vibration
      - @capacitor/status-bar to hide the status bar */
 (function () {

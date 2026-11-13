@@ -7,6 +7,7 @@
 #   APPLE_TEAM_ID     10-character Team ID (developer.apple.com > Membership)
 #   ADMOB_APP_ID      optional, AdMob app id ca-app-pub-...~...  (Google's test id if empty)
 #   ADMOB_REWARDED_ID optional, AdMob rewarded ad unit ca-app-pub-.../...  (Google's test unit if empty)
+#   ADMOB_INTERSTITIAL_ID optional, overrides the interstitial unit in app/www/ads-config.js
 name: iOS TestFlight
 on:
   workflow_dispatch:
@@ -48,6 +49,7 @@ jobs:
         env:
           ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
           ADMOB_REWARDED_ID: ${{ secrets.ADMOB_REWARDED_ID }}
+          ADMOB_INTERSTITIAL_ID: ${{ secrets.ADMOB_INTERSTITIAL_ID }}
           APP_VERSION: ${{ inputs.version }}
           BUILD_NUMBER: ${{ github.run_number }}
         run: python3 tools/ios_setup.py
