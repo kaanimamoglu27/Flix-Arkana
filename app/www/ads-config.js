@@ -6,8 +6,8 @@ window.FLIX_ADS_CONFIG = {
   // true: always Google's test ads. tools/ios_setup.py sets it in the app's copy: false for release builds (ADS_MODE=real).
   forceTestAds: false,
   ids: {
-    IOS_APP_ID: '',      // ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX
-    IOS_REWARDED: '',    // rewarded: "Reklam izle, devam et" (one revive per run)
+    IOS_APP_ID: 'ca-app-pub-9939733946730095~7866593636',      // ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX
+    IOS_REWARDED: 'ca-app-pub-9939733946730095/3988213328',    // rewarded: "Reklam izle, devam et" (one revive per run)
     IOS_INTERSTITIAL: '',
     IOS_BANNER: '',
     ANDROID_REWARDED: '',
