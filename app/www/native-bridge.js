@@ -45,31 +45,12 @@
     H.impact({style: ms >= 80 ? 'HEAVY' : ms >= 25 ? 'MEDIUM' : 'LIGHT'}).catch(() => {});
   }
 
-  // Rewarded ad (AdMob). These are Google's public TEST ids; replace them with your own
-  // AdMob ad unit ids before sending the app to review (AdMob > Apps > Ad units).
-  const AD_UNIT = ios ? 'ca-app-pub-3940256099942544/1712485313' : 'ca-app-pub-3940256099942544/5224354917';
-  const AD_TESTING = AD_UNIT.indexOf('3940256099942544') >= 0;
-  let adReady = null;
-  async function initAds() {
-    const A = P.AdMob; if (!A) return;
-    try {
-      await A.initialize({initializeForTesting: AD_TESTING});
-      if (ios) { try { await A.requestTrackingAuthorization(); } catch (e) {} }
-      try { const c = await A.requestConsentInfo(); if (c && c.isConsentFormAvailable && c.status === 'REQUIRED') await A.showConsentForm(); } catch (e) {}
-      prepAd();
-    } catch (e) { console.warn('admob init', e); }
-  }
-  function prepAd() { const A = P.AdMob; if (!A) return; adReady = A.prepareRewardVideoAd({adId: AD_UNIT, isTesting: AD_TESTING}).then(() => true).catch(() => false); }
-  // resolves true when the player earned the reward, or when no ad could be shown (we never punish a missing ad), false when closed early
+  // Rewarded ad: AdMob runs in ads.js (window.FlixAds; ids in ads-config.js, Google consent + tracking question there).
+  // Resolves true when the player earned the reward, or when no ad could be shown (we never punish a missing ad), false when closed early.
   async function showRewardedAd() {
-    const A = P.AdMob; if (!A) return true;
-    if (!adReady) prepAd();
-    const ok = await adReady; adReady = null;
-    if (!ok) { prepAd(); return true; }
-    let got = false; const h = await A.addListener('onRewardedVideoAdReward', () => { got = true; });
-    try { await A.showRewardVideoAd(); got = true; } catch (e) { got = true; }
-    try { h.remove(); } catch (e) {}
-    prepAd(); return got;
+    const F = window.FlixAds; if (!F) return true;
+    const r = await F.showRewarded(6000);
+    return r !== 'closed';
   }
 
   window.FlixNative = {
@@ -94,6 +75,6 @@
   };
 
   document.addEventListener('deviceready', initStore, false);
-  initAds();
+  
   if (P.StatusBar) P.StatusBar.hide().catch(() => {});
 })();
