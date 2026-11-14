@@ -63,20 +63,44 @@
     return true;
   }
 
+  // iOS silently ignores the tracking request while the app is still launching (not yet "active"): no question
+  // appears and the status stays notDetermined. ads.js runs during launch, so wait until the page has loaded,
+  // is on screen, and a moment has passed. (Apple rejected FLIX Kick Up 1.5 (13) for this, Guideline 2.1.)
+  function whenActive() {
+    return new Promise((resolve) => {
+      const go = () => {
+        if (document.readyState !== 'complete') { window.addEventListener('load', go, {once: true}); return; }
+        if (document.visibilityState !== 'visible') { document.addEventListener('visibilitychange', go, {once: true}); return; }
+        setTimeout(resolve, 1000);
+      };
+      go();
+    });
+  }
+  function trackingStatus() { return A.trackingAuthorizationStatus().then((t) => t && t.status, () => null); }
+  function pause(ms) { return new Promise((r) => setTimeout(r, ms)); }
+  // Apple's "Allow tracking?" question. Asked BEFORE AdMob starts, so no ad SDK collects anything first.
+  async function askTracking() {
+    for (let tries = 0; tries < 4; tries++) {
+      if ((await trackingStatus()) !== 'notDetermined') return;   // answered before, or tracking turned off in Settings
+      await whenActive();
+      try { await A.requestTrackingAuthorization(); } catch (e) { return; }
+      if ((await trackingStatus()) !== 'notDetermined') return;   // the user answered
+      await pause(1500);                                          // the question did not show: try again a little later
+    }
+  }
+
   async function init() {
-    try {
-      await A.initialize({initializeForTesting: units.rewarded.isTesting || units.inter.isTesting || (CFG.testDevices || []).length > 0, testingDevices: CFG.testDevices || []});
-    } catch (e) { console.warn('admob init', e); return; }
-    // Google's consent message (EU / UK) first, then Apple's tracking question
+    if (ios && CFG.requestTracking) await askTracking();
+    // Google's consent message (EU / UK only), after Apple's question
     try {
       let c = await A.requestConsentInfo();
       if (c && c.isConsentFormAvailable && c.status === 'REQUIRED') c = await A.showConsentForm();
       consentInfo(c);
     } catch (e) {}
     announcePrivacy();
-    if (ios && CFG.requestTracking) {
-      try { const t = await A.trackingAuthorizationStatus(); if (t && t.status === 'notDetermined') await A.requestTrackingAuthorization(); } catch (e) {}
-    }
+    try {
+      await A.initialize({initializeForTesting: units.rewarded.isTesting || units.inter.isTesting || (CFG.testDevices || []).length > 0, testingDevices: CFG.testDevices || []});
+    } catch (e) { console.warn('admob init', e); return; }
     started = true;
     if (!canRequest) return;
     load('rewarded'); if (CFG.interstitial !== false) load('inter'); syncBanner();
