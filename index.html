@@ -5407,7 +5407,7 @@ window.ARKANA = {G, input, add: addEnemy, newRun, update, showCards, applyCard, 
     arkana: 'flix-arkana-terms-of-service-kullanim-sartlari',
     direktor: 'flix-direktor-terms-of-service-kullanim-sartlari'
   };
-  var SITE = 'https://www.flixtoysofficial.com', MAIL = 'flixofficial2025@gmail.com';
+  var SITE = 'https://www.flixtoysofficial.com', MAIL = 'flixofficial2025@gmail.com', STUDIO = 'https://www.flixgamestudios.com';
   var T = {
     tr: { legal: 'Yasal Bilgiler', about: 'Hakkında', close: 'Kapat', hub: 'Tüm yasal belgeler',
       privacy: 'Gizlilik Politikası', tos: 'Kullanım Şartları', eula: 'Son Kullanıcı Lisans Sözleşmesi', copy: 'Telif Hakları',
@@ -5415,7 +5415,7 @@ window.ARKANA = {G, input, add: addEnemy, newRun, update, showCards, applyCard, 
       note: 'Belgeler flixtoysofficial.com adresinde, tarayıcıda açılır.',
       offline: 'İnternet bağlantısı yok. Belgeyi açmak için bağlan ya da bu adresi tarayıcıda aç:',
       fail: 'Sayfa açılamadı. Bu adresi tarayıcıda açabilirsin:', ok: 'Tamam', copied: 'Adres kopyalandı', copyB: 'Adresi kopyala',
-      dev: 'Geliştirenler', own: 'Telif hakkı sahipliği', pub: 'Yayıncı', cr: 'Telif', web: 'Web sitesi', sup: 'Destek',
+      dev: 'Geliştirenler', own: 'Telif hakkı sahipliği', pub: 'Yayıncı', cr: 'Telif', web: 'Web sitesi', games: 'FLIX oyunları', gamesBtn: 'Tüm FLIX oyunları', gamesSub: 'flixgamestudios.com', sup: 'Destek',
       crTxt: '© 2026 Kaan İmamoğlu ve Onat Deniz Şener. Tüm hakları saklıdır.',
       pubNote: 'FLIX TOYS yetkili yayıncıdır.', oss: 'Açık kaynak bileşenler', ver: 'Sürüm' },
     en: { legal: 'Legal & Information', about: 'About', close: 'Close', hub: 'All legal documents',
@@ -5424,7 +5424,7 @@ window.ARKANA = {G, input, add: addEnemy, newRun, update, showCards, applyCard, 
       note: 'Documents open in your browser on flixtoysofficial.com.',
       offline: 'No internet connection. Connect to open the document, or open this address in a browser:',
       fail: 'The page could not be opened. You can open this address in a browser:', ok: 'OK', copied: 'Address copied', copyB: 'Copy address',
-      dev: 'Developed by', own: 'Copyright ownership', pub: 'Published by', cr: 'Copyright', web: 'Website', sup: 'Support',
+      dev: 'Developed by', own: 'Copyright ownership', pub: 'Published by', cr: 'Copyright', web: 'Website', games: 'FLIX games', gamesBtn: 'All FLIX games', gamesSub: 'flixgamestudios.com', sup: 'Support',
       crTxt: '© 2026 Kaan İmamoğlu and Onat Deniz Şener. All rights reserved.',
       pubNote: 'FLIX TOYS is the authorized publisher.', oss: 'Open-source components', ver: 'Version' }
   };
@@ -5523,6 +5523,7 @@ window.ARKANA = {G, input, add: addEnemy, newRun, update, showCards, applyCard, 
     if (!root) return;
     var l = lang(), L = T[l], h = ''; root.setAttribute('lang', l);
     if (view === 'legal') {
+      h += '<button class="fli hub" data-u="' + STUDIO + '"><i>🎮</i><span>' + esc(L.gamesBtn) + ' · ' + esc(L.gamesSub) + '</span><b>›</b></button>';
       DOCS.forEach(function (d) { h += '<button class="fli" data-u="' + esc(url(d)) + '"><i>' + d[1] + '</i><span>' + esc(L[d[0]]) + '</span><b>›</b></button>'; });
       h += '<button class="fli hub" data-u="' + esc(BASE + HUB) + '"><i>📚</i><span>' + esc(L.hub) + '</span><b>›</b></button>';
       h += '<div class="fln">' + esc(L.note) + '</div>';
@@ -5531,6 +5532,7 @@ window.ARKANA = {G, input, add: addEnemy, newRun, update, showCards, applyCard, 
         '<dt>' + esc(L.own) + '</dt><dd>Kaan İmamoğlu — 50%<br>Onat Deniz Şener — 50%</dd>' +
         '<dt>' + esc(L.pub) + '</dt><dd>FLIX TOYS OYUNCAKÇILIK SANAYİ VE TİCARET LİMİTED ŞİRKETİ<small>' + esc(L.pubNote) + '</small></dd>' +
         '<dt>' + esc(L.cr) + '</dt><dd>' + esc(L.crTxt) + '</dd>' +
+        '<dt>' + esc(L.games) + '</dt><dd><button data-u="' + STUDIO + '">www.flixgamestudios.com</button></dd>' +
         '<dt>' + esc(L.web) + '</dt><dd><button data-u="' + SITE + '">www.flixtoysofficial.com</button></dd>' +
         '<dt>' + esc(L.sup) + '</dt><dd><button data-u="mailto:' + MAIL + '">' + MAIL + '</button></dd>' +
         (C.oss && C.oss.length ? '<dt>' + esc(L.oss) + '</dt><dd><small>' + esc(C.oss.join(' · ')) + '</small></dd>' : '') +
