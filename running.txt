@@ -1,0 +1,1 @@
+5305	0	UIKitApplication:com.flixtoys.arkana[78ef][rb-legacy]
