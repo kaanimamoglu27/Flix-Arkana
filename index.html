@@ -332,7 +332,7 @@ h2{font-family:Bangers,Fredoka,sans-serif;font-weight:400;letter-spacing:2px;col
         <button data-c="touch"><i>👆</i><b>Dokunmatik</b><span>Dokunduğun yere yürür, basılı tutarsan parmağını takip eder</span></button>
         <button data-c="pad"><i>✛</i><b>Yön tuşları</b><span>Sol altta ok tuşları, ikisine birden basınca çapraz gider</span></button>
       </div>
-      <div class="row" style="margin-top:10px"><button class="btn small" id="bSound">🔊 Ses açık</button><button class="btn small" id="bQ">🎬 2K · 60 fps</button></div>
+      <div class="row" style="margin-top:10px"><button class="btn small" id="bSound">🔊 Ses açık</button><button class="btn small" id="bMus">🎵 Müzik açık</button><button class="btn small" id="bQ">🎬 2K · 60 fps</button></div>
       <div class="row" style="margin-top:10px"><button class="btn small" data-flixlegal="legal">📜 Yasal Bilgiler</button><button class="btn small" data-flixlegal="about">ℹ️ Hakkında</button></div>
       <div class="row" style="margin-top:10px"><button class="btn main" id="bSetOk">Tamam</button></div>
     </div>
@@ -487,6 +487,106 @@ const SFX = {
   heal: () => [660, 880, 1100].forEach((f, i) => tone('sine', f, f, 0.12, 0.05, i * 0.06)),
   wave: () => [659, 880].forEach((f, i) => tone('triangle', f, f, 0.14, 0.06, i * 0.1))
 };
+/* ---------- music (v44, Kaan: "daha güzel müzikler"): a small WebAudio band in D minor ----------
+   three looping tracks written for ARKANA: menu (calm, mysterious), play (heroic adventure), boss (fast, heavy);
+   pad + bass + arpeggio with echo + lead melody + drums, all through one reverb and a compressor, quieter than the effects */
+const MUS = {cur: null, bus: null, step: 0, next: 0, loop: 0, out: null, rev: null, dly: null, fb: null, nz: null};
+const mid = n => 440 * Math.pow(2, (n - 69) / 12);
+const DM = [0, 2, 3, 5, 7, 8, 10]; // D natural minor
+const dg = d => 62 + Math.floor(d / 7) * 12 + DM[((d % 7) + 7) % 7]; // scale degree -> midi (0 = D4)
+const CH = {Dm: [50, 0], Bb: [46, 1], C: [48, 1], Am: [45, 0], F: [41, 1], Gm: [43, 0], A: [45, 1], Eb: [51, 1]};
+const chordN = c => { const [r, maj] = CH[c]; return [r, r + (maj ? 4 : 3), r + 7]; };
+const TRK = {
+  menu: {bpm: 76, ch: ['Dm', 'Bb', 'F', 'C', 'Dm', 'Gm', 'Bb', 'A'], pad: 1, bass: 'x.......x.......', arp: '0.1.2.1.0.1.2.3.', arpO: 24, kick: 'x...............', snare: '................', hat: '................',
+    mel: '7---4---5-4-2---4---2-0-1-------7---9-8-7---5---4-5-6-7-8-------', melT: 'bell', vol: 0.9},
+  play: {bpm: 112, ch: ['Dm', 'Bb', 'C', 'Am', 'Dm', 'F', 'C', 'A'], pad: 1, bass: 'x.x.x.xxx.x.x.xx', arp: '0120312001203123', arpO: 24, kick: 'x.....x.x.......', snare: '....x.......x...', hat: '..x...x...x...xx',
+    mel: '4-347-645-432-..6-469-878-------7-9-11-977-9-679-8-646-8-8---....', melT: 'lead', alt: 1, vol: 1},
+  boss: {bpm: 138, ch: ['Dm', 'Dm', 'Bb', 'A', 'Gm', 'Gm', 'Eb', 'A'], pad: 0, stab: 'x..x..x...x.x...', bass: 'xxxxxxxxxxxxxxxx', arp: '0123210301232103', arpO: 24, kick: 'x...x...x...x.x.', snare: '....x.......x..x', hat: 'xxxxxxxxxxxxxxxx',
+    mel: '0-0-3-0-4-3-2-1-0-0-3-0-4-5-4-3-4-4-6-4-7-6-5-4-4-4-5-6-8-6-5-4-', melT: 'brass', vol: 1}
+};
+function musInit() {
+  if (MUS.out || !AC) return;
+  const c = AC, comp = c.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 4; comp.connect(c.destination);
+  MUS.out = c.createGain(); MUS.out.gain.value = 0; MUS.out.connect(comp);
+  // reverb: a generated 2.4 s hall
+  const len = Math.floor(c.sampleRate * 2.4), ir = c.createBuffer(2, len, c.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
+  MUS.rev = c.createConvolver(); MUS.rev.buffer = ir; const rg = c.createGain(); rg.gain.value = 0.55; MUS.rev.connect(rg); rg.connect(MUS.out);
+  MUS.dly = c.createDelay(1); MUS.fb = c.createGain(); MUS.fb.gain.value = 0.32; const dl = c.createBiquadFilter(); dl.type = 'lowpass'; dl.frequency.value = 2600;
+  MUS.dly.connect(dl); dl.connect(MUS.fb); MUS.fb.connect(MUS.dly); dl.connect(MUS.out);
+  const n = c.createBuffer(1, c.sampleRate, c.sampleRate), d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; MUS.nz = n;
+}
+// one note: oscillator(s) -> filter -> envelope -> track bus (+ reverb / echo sends)
+function mNote(t, f, dur, o) {
+  const c = AC, g = c.createGain(), fl = c.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.setValueAtTime(o.cut || 3000, t); if (o.cutEnd) fl.frequency.exponentialRampToValueAtTime(o.cutEnd, t + dur); fl.Q.value = o.q || 0.7;
+  const a = o.a || 0.005, r = o.r || 0.08, v = o.v;
+  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + a);
+  if (o.sus) g.gain.setValueAtTime(v, t + Math.max(a, dur - r)); else g.gain.exponentialRampToValueAtTime(Math.max(0.0001, v * 0.25), t + Math.max(a + 0.01, dur - r));
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur + r);
+  fl.connect(g); g.connect(MUS.bus);
+  if (o.rev) { const s = c.createGain(); s.gain.value = o.rev; g.connect(s); s.connect(MUS.rev); }
+  if (o.echo) { const s = c.createGain(); s.gain.value = o.echo; g.connect(s); s.connect(MUS.dly); }
+  for (const [type, mul, det] of o.osc) { const x = c.createOscillator(); x.type = type; x.frequency.value = f * mul; x.detune.value = det || 0; if (o.vib) { const l = c.createOscillator(), lg = c.createGain(); l.frequency.value = 5.2; lg.gain.value = f * mul * 0.006; l.connect(lg); lg.connect(x.frequency); l.start(t + 0.15); l.stop(t + dur + r + 0.05); } x.connect(fl); x.start(t); x.stop(t + dur + r + 0.05); }
+}
+function mDrum(t, k) {
+  const c = AC, g = c.createGain();
+  if (k === 'kick') { const o = c.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(170, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.14); g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.22); o.connect(g); g.connect(MUS.bus); o.start(t); o.stop(t + 0.25); }
+  const s = c.createBufferSource(), f = c.createBiquadFilter(); s.buffer = MUS.nz;
+  if (k === 'kick') { f.type = 'lowpass'; f.frequency.value = 900; g.gain.value = 0; }
+  if (k === 'snare') { f.type = 'bandpass'; f.frequency.value = 1700; f.Q.value = 0.8; const sg = c.createGain(); sg.gain.setValueAtTime(0.16, t); sg.gain.exponentialRampToValueAtTime(0.001, t + 0.16); s.connect(f); f.connect(sg); sg.connect(MUS.bus); const rs = c.createGain(); rs.gain.value = 0.25; sg.connect(rs); rs.connect(MUS.rev); s.start(t, Math.random() * 0.5, 0.2); return; }
+  if (k === 'hat') { f.type = 'highpass'; f.frequency.value = 7000; const hg = c.createGain(); hg.gain.setValueAtTime(0.045, t); hg.gain.exponentialRampToValueAtTime(0.001, t + 0.05); s.connect(f); f.connect(hg); hg.connect(MUS.bus); s.start(t, Math.random() * 0.5, 0.06); }
+}
+const INS = {
+  pad: {osc: [['sawtooth', 1, -9], ['sawtooth', 1, 9]], cut: 900, a: 0.5, r: 0.9, sus: 1, rev: 0.7},
+  bass: {osc: [['sawtooth', 1, 0], ['square', 0.5, 0]], cut: 700, cutEnd: 260, q: 4, r: 0.05},
+  arp: {osc: [['triangle', 1, 0], ['square', 2, 4]], cut: 3200, cutEnd: 900, r: 0.1, echo: 0.45, rev: 0.25},
+  bell: {osc: [['sine', 1, 0], ['sine', 2.01, 0], ['triangle', 3, 0]], cut: 6000, a: 0.004, r: 1.2, rev: 0.6, echo: 0.3},
+  lead: {osc: [['square', 1, -6], ['sawtooth', 1, 6]], cut: 2400, a: 0.03, r: 0.18, sus: 1, vib: 1, rev: 0.45, echo: 0.2},
+  brass: {osc: [['sawtooth', 1, -7], ['sawtooth', 1, 7], ['sawtooth', 0.5, 0]], cut: 1800, cutEnd: 700, a: 0.02, r: 0.1, sus: 1, q: 2, rev: 0.3},
+  stab: {osc: [['sawtooth', 1, -10], ['sawtooth', 1, 10]], cut: 2600, cutEnd: 500, a: 0.005, r: 0.12, rev: 0.4}
+};
+const VOL = {pad: 0.028, bass: 0.07, arp: 0.022, bell: 0.05, lead: 0.03, brass: 0.032, stab: 0.03};
+function mPlay(name, t, f, dur, mul) { mNote(t, f, dur, Object.assign({v: VOL[name] * (mul || 1)}, INS[name])); }
+function musStep(tr, t, st) {
+  const sp = 60 / tr.bpm / 4, bar = Math.floor(st / 16) % 8, s = st % 16, cn = chordN(tr.ch[bar]);
+  if (tr.pad && s === 0) for (const n of cn) mPlay('pad', t, mid(n + 12), sp * 16 - 0.05);
+  if (tr.stab && tr.stab[s] === 'x') for (const n of cn) mPlay('stab', t, mid(n + 12), sp * 1.5);
+  if (tr.bass[s] === 'x') mPlay('bass', t, mid(cn[0] + (tr === TRK.boss && s % 4 === 2 ? 12 : 0)), sp * (tr === TRK.menu ? 7 : 0.9));
+  const ai = tr.arp[s]; if (ai !== '.' && (tr !== TRK.menu || s % 2 === 0)) { const i = +ai; mPlay('arp', t, mid(cn[i % 3] + tr.arpO + (i >= 3 ? 12 : 0)), sp * 0.9, tr === TRK.menu ? 1.3 : 1); }
+  if (tr.kick[s] === 'x') mDrum(t, 'kick');
+  if (tr.snare[s] === 'x' || (bar === 7 && s >= 12 && tr !== TRK.menu)) mDrum(t, 'snare');
+  if (tr.hat[s] === 'x') mDrum(t, 'hat');
+  // melody: one token per 8th note; digits = scale degree (two-digit degrees written as 10, 11), '-' holds, '.' rests
+  if (s % 2 === 0 && (!tr.alt || MUS.loop % 2 === 1)) {
+    const toks = tr.toks || (tr.toks = tr.mel.match(/1[0-9]|[0-9]|-|\./g)), i = bar * 8 + s / 2, k = toks[i];
+    if (k && k !== '-' && k !== '.') { let n = 1; while (toks[i + n] === '-' && (i + n) % 8 !== 0) n++; mPlay(tr.melT, t, mid(dg(+k) + (tr.melT === 'brass' ? -12 : 0)), sp * 2 * n - 0.03); }
+  }
+}
+function musWant() {
+  if (!save.sound || save.music === false) return null;
+  const s = G && G.state; if (!s || s === 'menu' || s === 'over' || s === 'comic') return 'menu';
+  return G.boss && !G.boss.dead ? 'boss' : 'play';
+}
+function musTick() {
+  if (!AC || document.hidden) return;
+  const want = musWant();
+  if (!want) { if (MUS.bus) { const b = MUS.bus; b.gain.setTargetAtTime(0, AC.currentTime, 0.15); setTimeout(() => { try { b.disconnect(); } catch (e) {} }, 1500); MUS.bus = null; MUS.cur = null; } return; }
+  if (AC.state === 'suspended') { try { AC.resume(); } catch (e) {} return; }
+  musInit(); if (!MUS.out) return;
+  const now = AC.currentTime, duck = G.state === 'paused' ? 0.45 : G.state === 'cards' ? 0.7 : 1;
+  MUS.out.gain.setTargetAtTime(0.9 * duck, now, 0.3);
+  if (want !== MUS.cur) {
+    if (MUS.bus) { const b = MUS.bus; b.gain.setTargetAtTime(0, now, 0.25); setTimeout(() => { try { b.disconnect(); } catch (e) {} }, 2500); }
+    MUS.bus = AC.createGain(); MUS.bus.gain.setValueAtTime(0, now); MUS.bus.gain.linearRampToValueAtTime(TRK[want].vol, now + 1.2); MUS.bus.connect(MUS.out);
+    MUS.cur = want; MUS.step = 0; MUS.loop = 0; MUS.next = now + 0.1; const tr = TRK[want]; MUS.dly.delayTime.setValueAtTime(60 / tr.bpm * 0.75, now);
+  }
+  const tr = TRK[MUS.cur], sp = 60 / tr.bpm / 4;
+  if (MUS.next < now - 0.5) MUS.next = now + 0.05; // after a stall, skip instead of firing a burst
+  while (MUS.next < now + 0.35) { musStep(tr, MUS.next, MUS.step); MUS.step++; if (MUS.step % 128 === 0) MUS.loop++; MUS.next += sp; }
+}
+setInterval(musTick, 90);
+// iOS only lets audio start from a tap: the first touch anywhere starts the menu music
+['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { initAudio(); if (AC && AC.state === 'suspended') try { AC.resume(); } catch (e) {} }, {capture: true, passive: true}));
 // haptics: native taptic engine inside the app, vibration API on Android browsers
 function buzz(ms) { const n = performance.now(); if (n - (buzz.t || 0) < 45) return; buzz.t = n; try { if (window.FlixNative && FlixNative.haptic) FlixNative.haptic(ms); else if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
@@ -2021,6 +2121,95 @@ const PASV = {
   rico:   {ic: '🎱', n: 'Sekme Gücü', d: 'Mermiler, mızraklar ve fırlatılan Flix çarptıktan sonra +1 düşmana daha seker'}
 };
 
+/* ---------- legendary weapons (v44, Kaan: "5, 10, 15, 20... seviyelerde YENİ silahlar") ----------
+   eight weapons that are not in the normal card pool: one is handed to the hero at the start of every 5th wave
+   (Seviye 5, 10, 15 ... 40, then again in endless). They do not take one of the 8 normal weapon slots and level up like the others. */
+const LEG = ['chain', 'starburst', 'frost', 'storm', 'quake', 'blackhole', 'disc', 'pillar'];
+Object.assign(WEAP, {
+  chain:     {leg: 1, ic: '⛓️', n: 'Zincir Yıldırım', d: ['Yıldırım 5 düşman arasında zincirlenerek atlar', '+2 halka', 'Hasar +12', '+3 halka', 'Daha sık, sersemletir']},
+  starburst: {leg: 1, ic: '✴️', n: 'Yıldız Patlaması', d: ['Her yöne 10 altın yıldız fırlatır', '+4 yıldız', 'Yıldızlar 3 düşmanı deler', 'Hasar +10', 'Çift patlama']},
+  frost:     {leg: 1, ic: '🧊', n: 'Buz Yelpazesi', d: ['Yelpaze gibi 5 buz kristali atar, dondurur', '+2 kristal', 'Daha uzun donma', 'Hasar +12', 'Çok hızlı atış']},
+  storm:     {leg: 1, ic: '⛈️', n: 'Fırtına Bulutu', d: ['Başının üstündeki bulut yakındaki düşmanlara yıldırım indirir', 'Daha geniş alan', 'Hasar +6', 'Aynı anda 2 yıldırım', 'Çok sık yıldırım']},
+  quake:     {leg: 1, ic: '🌋', n: 'Lav Yarığı', d: ['Yerden düşmana doğru ilerleyen lav patlamaları', 'Yarık uzar', 'Hasar +20', 'Üç yöne yarık', 'Daha sık, daha geniş']},
+  blackhole: {leg: 1, ic: '🕳️', n: 'Kara Delik', d: ['Düşmanları içine çekip patlayan kara delik açar', 'Daha güçlü çekim', 'Patlama +40 hasar', 'İki kara delik', 'Dev kara delik']},
+  disc:      {leg: 1, ic: '🌀', n: 'Delici Disk', d: ['Her şeyi delip geçen dev dönen disk', '+1 disk', 'Hasar +15', 'Disk daha uzun gider', '3 disk, çok hızlı']},
+  pillar:    {leg: 1, ic: '🌟', n: 'Işık Sütunu', d: ['En güçlü düşmanlara gökten ışık sütunu indirir', '+1 sütun', 'Hasar +50', '+2 sütun', 'Daha sık, dev sütun']}
+});
+function legGift(n) {
+  if (G.mode === 'boss' || n < 5 || n % 5) return false;
+  const id = LEG.find(k => !G.weps[k]); if (!id) return false;
+  G.weps[id] = 1; G.legNew = id; const w = WEAP[id];
+  banner(`${w.ic} YENİ SİLAH: ${w.n}!`, w.d[0], 3.2); SFX.level(); buzz(60);
+  ringFx(G.px, G.pz, 3, 0xffd23f, 0.6); confetti(G.px, 2, G.pz, 40, 1.2);
+  FX.nums.push({x: G.px, y: 3.8, z: G.pz, t: 2.6, t0: 2.6, txt: w.ic + ' ' + w.n, col: '255,210,63', big: true});
+  try { updateAbilBar(); } catch (e) {}
+  return true;
+}
+let lastLegZap = 0;
+function legZap(e, dmg, fx, fy, fz) {
+  G.zaps.push({x: e.x, y: (e.fly || 0) + e.r, z: e.z, t: 0.22, fx, fy, fz}); hit(e, dmg, '190,170,255');
+  const n = performance.now(); if (n - lastLegZap > 140) { lastLegZap = n; SFX.zap(); }
+}
+function tickLegend(id, L, s, A, C, dt) {
+  if (id === 'chain' && s.t <= 0) {
+    let e = nearest(G.px, G.pz, 12); if (!e) { s.t = 0.3; return; }
+    s.t = (L >= 5 ? 1.1 : 1.6) * C; const n = 5 + (L >= 2 ? 2 : 0) + (L >= 4 ? 3 : 0), dmg = 24 + (L >= 3 ? 12 : 0), used = new Set();
+    let fx = G.px, fy = 1.6, fz = G.pz;
+    for (let i = 0; i < n && e; i++) { used.add(e); legZap(e, dmg * (1 - i * 0.04), fx, fy, fz); if (L >= 5 && e.type !== 'boss') e.slow = Math.max(e.slow, 0.8); fx = e.x; fy = (e.fly || 0) + e.r; fz = e.z; e = nearest(e.x, e.z, 5.5 * A, used); }
+    castAnim();
+  }
+  if (id === 'starburst' && s.t <= 0) {
+    if (!nearest(G.px, G.pz, 10)) { s.t = 0.3; return; }
+    s.t = 2.4 * C; const n = 10 + (L >= 2 ? 4 : 0), dmg = 18 + (L >= 4 ? 10 : 0), a0 = Math.random() * TAU;
+    const fire = (off) => { for (let i = 0; i < n; i++) { const a = a0 + off + i * TAU / n; shoot({k: 'sb', x: G.px, z: G.pz, vx: Math.sin(a) * 12, vz: Math.cos(a) * 12, dmg, life: 1.1, pierce: L >= 3 ? 3 : 1, size: 0.3, col: 0xffd23f, hc: '255,210,63', y: 1.1}); } };
+    fire(0); if (L >= 5) setTimeout(() => { if (G.state === 'play' || G.state === 'cards') fire(TAU / n / 2); }, 350);
+    ringFx(G.px, G.pz, 2, 0xffd23f, 0.3); SFX.card();
+  }
+  if (id === 'frost' && s.t <= 0) {
+    const t = nearest(G.px, G.pz, 13); if (!t) { s.t = 0.3; return; }
+    s.t = (L >= 5 ? 1.0 : 1.7) * C; const n = 5 + (L >= 2 ? 2 : 0), dmg = 16 + (L >= 4 ? 12 : 0), a = Math.atan2(t.x - G.px, t.z - G.pz);
+    for (let i = 0; i < n; i++) { const b = a + (i - (n - 1) / 2) * 0.16; shoot({k: 'ice', x: G.px, z: G.pz, vx: Math.sin(b) * 16, vz: Math.cos(b) * 16, dmg, life: 0.9, pierce: 2, slow: L >= 3 ? 2.6 : 1.6, size: 0.26, col: 0xbff0ff, hc: '170,230,255', y: 1.3}); }
+    aimAt(G.px + Math.sin(a), G.pz + Math.cos(a), 0.3); castAnim(); tone('triangle', 1600, 2400, 0.08, 0.03);
+  }
+  if (id === 'storm') {
+    const rad = (4.5 + (L >= 2 ? 1.5 : 0)) * A; s.rad = rad;
+    if (Math.random() < dt * 6) sparkle(G.px + rnd(-1.2, 1.2), 3.6, G.pz + rnd(-1.2, 1.2), '160,170,200', 1);
+    if (s.t <= 0) {
+      s.t = (L >= 5 ? 0.3 : 0.5) * C; const dmg = 13 + (L >= 3 ? 6 : 0), used = new Set();
+      for (let i = 0; i < (L >= 4 ? 2 : 1); i++) { let best = null; query(G.px, G.pz, rad, o => { if (!used.has(o) && (!best || Math.random() < 0.35)) best = o; }); if (!best) break; used.add(best); legZap(best, dmg, best.x, 4.2, best.z); }
+    }
+  }
+  if (id === 'quake' && s.t <= 0) {
+    const t = nearest(G.px, G.pz, 12); if (!t) { s.t = 0.3; return; }
+    s.t = (L >= 5 ? 2.2 : 3.0) * C; const len = 6 + (L >= 2 ? 3 : 0), dmg = 30 + (L >= 3 ? 20 : 0), r = (L >= 5 ? 1.5 : 1.15) * A, a = Math.atan2(t.x - G.px, t.z - G.pz);
+    for (const off of L >= 4 ? [0, -0.7, 0.7] : [0]) for (let i = 1; i <= len; i++) { const d = i * 1.25, x = G.px + Math.sin(a + off) * d, z = G.pz + Math.cos(a + off) * d; addTel(x, z, r, 0.25 + i * 0.07, 0xff6a2a, {player: true, dmg}); }
+    G.shake = Math.max(G.shake, 0.2); castAnim();
+  }
+  if (id === 'blackhole' && s.t <= 0) {
+    const t = nearest(G.px, G.pz, 12); if (!t) { s.t = 0.3; return; }
+    s.t = 6 * C; const n = L >= 4 ? 2 : 1;
+    for (let i = 0; i < n; i++) { const e = i ? (nearest(t.x + rnd(-5, 5), t.z + rnd(-5, 5), 8) || t) : t; shoot({k: 'hole', x: e.x, z: e.z, vx: 0, vz: 0, life: 2.4, size: L >= 5 ? 1.1 : 0.8, col: 0x5a2a9a, y: 1.2, pull: (L >= 2 ? 7 : 5), rad: (L >= 5 ? 6 : 4.5) * A, dmg: 50 + (L >= 3 ? 40 : 0), pierce: 9999}); }
+    SFX.nova();
+  }
+  if (id === 'disc' && s.t <= 0) {
+    if (!nearest(G.px, G.pz, 12)) { s.t = 0.3; return; }
+    s.t = (L >= 5 ? 1.6 : 2.4) * C; const n = 1 + (L >= 2) + (L >= 5), dmg = 28 + (L >= 3 ? 15 : 0);
+    for (let i = 0; i < n; i++) { const t = nearest(G.px, G.pz, 14) ; const a = (t ? Math.atan2(t.x - G.px, t.z - G.pz) : Math.random() * TAU) + (i - (n - 1) / 2) * 0.5; shoot({k: 'disc', x: G.px, z: G.pz, vx: Math.sin(a) * 9, vz: Math.cos(a) * 9, dmg, life: L >= 4 ? 3.2 : 2.2, pierce: 9999, size: 0.75, col: 0x7cf3d0, hc: '124,243,208', y: 0.9}); }
+    tone('sawtooth', 300, 900, 0.18, 0.03);
+  }
+  if (id === 'pillar' && s.t <= 0) {
+    const pool = G.enemies.filter(e => !e.dead && !e.under && Math.abs(e.x - G.px) < 14 && Math.abs(e.z - G.pz) < 10); if (!pool.length) { s.t = 0.3; return; }
+    s.t = (L >= 5 ? 2.6 : 3.6) * C; pool.sort((a, b) => b.hp - a.hp); const n = 2 + (L >= 2) + (L >= 4 ? 2 : 0), dmg = 70 + (L >= 3 ? 50 : 0), r = (L >= 5 ? 2.2 : 1.6) * A;
+    for (let i = 0; i < n && i < pool.length; i++) addTel(pool[i].x, pool[i].z, r, 0.55 + i * 0.1, 0xfff2a8, {player: true, dmg, star: true});
+  }
+}
+// black hole: pulls everything near it in, sparkles, then implodes
+function tickHole(s, dt) {
+  query(s.x, s.z, s.rad, e => { if (e.type === 'boss') return; const dx = s.x - e.x, dz = s.z - e.z, d = Math.hypot(dx, dz) || 1; e.x += dx / d * Math.min(d, s.pull * dt); e.z += dz / d * Math.min(d, s.pull * dt); if ((e.hitCd.bh || 0) < G.time) { e.hitCd.bh = G.time + 0.4; hit(e, 4, '170,120,255'); } });
+  if (Math.random() < 0.7) { const a = Math.random() * TAU, r = s.rad * rnd(0.5, 1); FX.parts.push({x: s.x + Math.cos(a) * r, y: rnd(0.3, 1.6), z: s.z + Math.sin(a) * r, vx: -Math.cos(a) * r * 1.6, vy: 0, vz: -Math.sin(a) * r * 1.6, life: 0.6, max: 0.6, col: '170,110,255', sz: 5}); }
+  if (s.life <= 0) { boom(s.x, s.z, s.rad * 0.7, s.dmg); ringFx(s.x, s.z, s.rad, 0xa070ff, 0.4); }
+}
+
 /* ---------- state ---------- */
 const G = {state: 'menu', enemies: [], shots: [], eshots: [], gems: [], items: [], tels: [], zaps: [], weps: {}, pas: {}, ws: {}, hp: 100, maxHp: 100, px: 0, pz: 0};
 const input = {mx: 0, mz: 0, keys: {}};
@@ -2068,12 +2257,12 @@ let bannerT = 0;
 function banner(txt, sub, dur) { $('banner').innerHTML = (txt ? `<b>${txt}</b>` : '') + (sub ? `<small>${sub}</small>` : ''); $('banner').classList.add('on'); bannerT = dur || 1.8; }
 function waveGift(n) {
   if (G.mode === 'boss' || n < 2) return;
-  // v43 (Kaan): weapons only come every 5 waves, as two weapon cards (a new weapon or a weapon upgrade);
-  // the level-ups in between are passive only. Fewer guns firing at once = less load on the phone.
+  // v44 (Kaan: "5, 10, 15, 20. seviyelerde yeni silahlar, var olanları hızlı sunma"): every 5th wave hands over a brand-new
+  // legendary weapon (legGift) plus one weapon card to upgrade; the level-ups in between are passive only.
   if (n % 5) return;
-  G.wepPick = (G.wepPick || 0) + 2; G.pending += 2;
-  ringFx(G.px, G.pz, 2.6, 0xffd23f, 0.5); confetti(G.px, 2, G.pz, 24, 1);
-  FX.nums.push({x: G.px, y: 3.8, z: G.pz, t: 2.2, t0: 2.2, txt: '🎁 Silah seçimi!', col: '255,210,63', big: true});
+  const got = legGift(n);
+  G.wepPick = (G.wepPick || 0) + 1; G.pending += 1;
+  if (!got) { ringFx(G.px, G.pz, 2.6, 0xffd23f, 0.5); confetti(G.px, 2, G.pz, 24, 1); FX.nums.push({x: G.px, y: 3.8, z: G.pz, t: 2.2, t0: 2.2, txt: '🎁 Silah seçimi!', col: '255,210,63', big: true}); }
 }
 function WNAME() { return G.mode === 'story' && !G.endless ? 'Seviye' : 'Dalga'; }
 function startWave(n) {
@@ -2427,7 +2616,7 @@ function tickWeapons(dt) {
       const pool = G.enemies.filter(e => !e.dead && Math.abs(e.x - G.px) < 14 && Math.abs(e.z - G.pz) < 9);
       for (let i = 0; i < n; i++) { const e = pool.length ? pool[Math.floor(Math.random() * pool.length)] : null; const x = e ? e.x + rnd(-1, 1) : G.px + rnd(-8, 8), z = e ? e.z + rnd(-1, 1) : G.pz + rnd(-6, 6); addTel(x, z, rad, 0.7 + i * 0.12, 0xffd23f, {player: true, dmg, star: true}); }
     }
-    tickPowers2(id, L, s, A, C); tickPowers3(id, L, s, A, C); tickPowers4(id, L, s, A, C);
+    tickPowers2(id, L, s, A, C); tickPowers3(id, L, s, A, C); tickPowers4(id, L, s, A, C); if (WEAP[id].leg) tickLegend(id, L, s, A, C, dt);
     if (id === 'beam') {
       const len = (5 + (L >= 2 ? 1.5 : 0)) * A, on = L >= 4 ? 4 : 2.8, dmg = 6 + (L >= 3 ? 4 : 0), cyc = 6 * C;
       s.c = (s.c || 0) + dt; const active = (s.c % cyc) < on; s.on = active; s.len = len; s.ang = (s.ang || 0) + dt * 2.2; s.two = L >= 5;
@@ -2606,6 +2795,7 @@ function update(dt) {
   // shots
   for (const s of G.shots) {
     s.life -= dt;
+    if (s.k === 'hole') { tickHole(s, dt); continue; }
     if (s.k === 'm') { if (s.target && !s.target.dead) { const a = Math.atan2(s.target.x - s.x, s.target.z - s.z), sp = 15, cur = Math.atan2(s.vx, s.vz); let da = a - cur; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; const na = cur + clamp(da, -9 * dt, 9 * dt); s.vx = Math.sin(na) * sp; s.vz = Math.cos(na) * sp; } }
     if (s.k === 'hat') { const sp = 12; if (!s.ret) { s.dist += sp * dt; s.x += Math.sin(s.a) * sp * dt; s.z += Math.cos(s.a) * sp * dt; if (s.dist > s.range || solidPt(s.x, s.z)) { if (s.dist <= s.range) bldDamage(s.x, s.z, s.dmg); s.ret = true; } } else { const dx = G.px - s.x, dz = G.pz - s.z, d = Math.hypot(dx, dz); if (d < 0.8) { s.life = 0; continue; } s.x += dx / d * sp * 1.15 * dt; s.z += dz / d * sp * 1.15 * dt; } s.spin = (s.spin || 0) + dt * 14;
       QS = s; query(s.x, s.z, 0.6, qHat); continue; }
@@ -2845,11 +3035,12 @@ function openChest() {
 }
 
 /* ---------- cards ---------- */
-function cardOptions() {
-  const o = [], wn = Object.keys(G.weps).length, pn = Object.keys(G.pas).length;
-  const wOk = G.mode === 'boss' || (G.wepPick || 0) > 0;
-  if (wOk) for (const id in WEAP) { const L = G.weps[id] || 0; if (L >= 5 || (!L && wn >= MAXW)) continue; o.push({type: 'w', id, ic: WEAP[id].ic, name: WEAP[id].n, lv: L + 1, desc: WEAP[id].d[L]}); }
-  if ((G.wepPick || 0) > 0 && o.length) return o; // a weapon pick shows weapons only
+function wepLevel(lv) { return false; } // v44: weapons come with the waves again (waveGift), see legGift()
+function cardOptions(wpLv) {
+  const o = [], wn = Object.keys(G.weps).filter(k => !WEAP[k].leg).length, pn = Object.keys(G.pas).length;
+  const wOk = G.mode === 'boss' || (G.wepPick || 0) > 0 || wpLv;
+  if (wOk) for (const id in WEAP) { const L = G.weps[id] || 0; if (L >= 5 || (!L && (wn >= MAXW || WEAP[id].leg))) continue; o.push({type: 'w', id, ic: WEAP[id].ic, name: WEAP[id].n, lv: L + 1, desc: WEAP[id].d[L]}); }
+  if (((G.wepPick || 0) > 0 || wpLv) && o.length) return o; // a weapon pick shows weapons only
   for (const id in PASV) { const L = G.pas[id] || 0; if (L >= 5 || (!L && pn >= 6)) continue; o.push({type: 'p', id, ic: PASV[id].ic, name: PASV[id].n, lv: L + 1, desc: PASV[id].d}); }
   if (G.comp && (G.compL || 1) < 5) { const C = COMP[G.comp.kind], L = G.compL || 1; o.push({type: 'c', id: G.comp.kind, ic: C.ic, name: C.n, lv: L + 1, desc: C.d[L]}); }
   return o;
@@ -2863,7 +3054,8 @@ function applyCard(c) {
 }
 function showCards() {
   G.state = 'cards'; G.pending--; $('banner').classList.remove('on'); bannerT = 0;
-  let opts = cardOptions(); const pick = [], wp = (G.wepPick || 0) > 0; if (wp) G.wepPick--;
+  const lvNow = G.level - G.pending, wpLv = wepLevel(lvNow);
+  let opts = cardOptions(wpLv); const pick = [], wp = wpLv || (G.wepPick || 0) > 0; if (wp && !wpLv) G.wepPick--;
   // favour new weapons early so every level brings something fresh
   const fresh = opts.filter(o => o.lv === 1 && o.type === 'w');
   if (fresh.length && Object.keys(G.weps).length < 5) pick.push(fresh.splice(Math.floor(Math.random() * fresh.length), 1)[0]);
@@ -2872,7 +3064,7 @@ function showCards() {
   // when the build is full (or past level 25) the cards keep coming as endless power-ups
   const extra = [{type: 'dmg', ic: '💥', name: 'Güç Kristali', lv: 0, desc: 'Tüm hasar +4%'}, {type: 'mhp', ic: '❤️', name: 'Dev Kalp', lv: 0, desc: '+10 maksimum can, canın yarısı dolar'}, {type: 'spd2', ic: '💨', name: 'Rüzgar Tüyü', lv: 0, desc: 'Hız +4%'}, {type: 'cd2', ic: '⏳', name: 'Zaman Kumu', lv: 0, desc: 'Güçler %4 daha sık'}, {type: 'heal', ic: '🍓', name: 'Çilek', lv: 0, desc: 'Canın tamamen dolar'}, {type: 'gold', ic: '🪙', name: 'Altın Kesesi', lv: 0, desc: '+40 altın'}];
   while (pick.length < 3) pick.push(extra.splice(Math.floor(Math.random() * extra.length), 1)[0]);
-  const lvShow = G.level - G.pending; $('cardsTitle').textContent = wp ? '🎁 Silah seçimi!' : lvShow > 25 ? `Seviye ${lvShow}! Sonsuz güç` : `Seviye ${lvShow}!`;
+  const lvShow = lvNow, LN = wp && G.legNew && WEAP[G.legNew]; if (wp) G.legNew = null; $('cardsTitle').textContent = LN ? `${LN.ic} Yeni silah: ${LN.n}! Şimdi bir silahını güçlendir` : wpLv && pick.some(c => c.type === 'w') ? `Seviye ${lvShow}! 🎁 Silah seçimi` : wp ? '🎁 Silah seçimi!' : lvShow > 25 ? `Seviye ${lvShow}! Sonsuz güç` : `Seviye ${lvShow}!`;
   const list = $('cardList'); list.innerHTML = '';
   for (const c of pick) {
     const b = document.createElement('button'); b.className = 'card ' + (c.type === 'p' || c.type === 'c' ? 'p' : 'w');
@@ -3277,7 +3469,7 @@ function drawFX(rdt, dt) {
   }
   if (rot) x.setTransform(d, 0, 0, d, 0, 0); x.globalAlpha = 1; { let j = 0; const a = FX.parts; for (let i = 0; i < a.length; i++) if (a[i].life > 0) a[j++] = a[i]; a.length = j; }
   // lightning from the sky
-  for (const z of G.zaps) { const [ax, ay] = proj(z.x, 9, z.z), [bx, by] = proj(z.x, z.y, z.z); for (const [w, col] of [[10, 'rgba(255,240,120,.45)'], [4, '#fff']]) { x.strokeStyle = col; x.lineWidth = w; x.lineCap = 'round'; x.beginPath(); x.moveTo(ax, ay); for (let i = 1; i < 6; i++) { const k = i / 6; x.lineTo(ax + (bx - ax) * k + rnd(-10, 10), ay + (by - ay) * k); } x.lineTo(bx, by); x.stroke(); } }
+  for (const z of G.zaps) { const [ax, ay] = z.fx !== undefined ? proj(z.fx, z.fy, z.fz) : proj(z.x, 9, z.z), [bx, by] = proj(z.x, z.y, z.z); for (const [w, col] of [[10, 'rgba(255,240,120,.45)'], [4, '#fff']]) { x.strokeStyle = col; x.lineWidth = w; x.lineCap = 'round'; x.beginPath(); x.moveTo(ax, ay); for (let i = 1; i < 6; i++) { const k = i / 6; x.lineTo(ax + (bx - ax) * k + rnd(-10, 10), ay + (by - ay) * k); } x.lineTo(bx, by); x.stroke(); } }
   // telegraphs drawn on the street: archer aim lines, brute charge lanes, bomb fuses, health of big skeletons
   for (const e of G.enemies) {
     if (e.dead || e.type === 'boss') continue;
@@ -5132,7 +5324,7 @@ function updateMenu() {
     else { shopOpen('hero'); SHOP.pv.hero = k; SHOP.pv.hs = 0; shopDraw(); toast(HEROES[k].n + ' mağazada: önce kilidini aç'); } };
   $('bestTxt').textContent = save.bestWave ? `Rekor: dalga ${save.bestWave} · ${save.bestKills} düşman` : '';
   coinUI();
-  const s = save.sound ? '🔊 Ses açık' : '🔇 Ses kapalı'; $('bSound').textContent = s; $('bSound2').textContent = s;
+  const s = save.sound ? '🔊 Ses açık' : '🔇 Ses kapalı'; $('bSound').textContent = s; $('bSound2').textContent = s; $('bMus').textContent = save.music === false ? '🎵 Müzik kapalı' : '🎵 Müzik açık';
 }
 function toMenu() { bannerT = 0; $('banner').classList.remove('on'); setArena(false); doomReset(false); clearWorld(); G.comp = null; G.enemies = []; G.shots = []; G.eshots = []; G.gems = []; G.items = []; G.tels = []; G.zaps = []; G.boss = null; FX.parts = []; FX.nums = []; G.state = 'menu'; G.px = G.pz = 0; $('hud').classList.remove('on'); $('bPause').style.display = 'none'; updateMenu(); screen('menu'); }
 function pause() {
@@ -5183,7 +5375,7 @@ for (const b of document.querySelectorAll('#ctrlList button')) b.onclick = () =>
 applyCtrl();
 const toggleSound = () => { save.sound = !save.sound; persist(); updateMenu(); };
 for (const w of document.querySelectorAll('#menu .wallet .pill')) w.onclick = () => shopOpen('gold');
-$('bSound').onclick = toggleSound; $('bSound2').onclick = toggleSound; $('bQ').onclick = toggleQ; $('bQ2').onclick = toggleQ; qLabel();
+$('bMus').onclick = () => { initAudio(); save.music = save.music === false; persist(); updateMenu(); }; $('bSound').onclick = toggleSound; $('bSound2').onclick = toggleSound; $('bQ').onclick = toggleQ; $('bQ2').onclick = toggleQ; qLabel();
 document.addEventListener('visibilitychange', () => { if (document.hidden) { pause(); try { if (AC && AC.state === 'running') AC.suspend(); } catch (e) {} } });
 setInterval(() => $('bFlip').classList.toggle('show', !!ROT && G.state === 'menu'), 300);
 window.addEventListener('resize', layout);
