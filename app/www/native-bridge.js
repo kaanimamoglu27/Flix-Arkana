@@ -16,8 +16,24 @@
   const CONSUMABLE = ['bundle_mini', 'gems_80', 'gems_500', 'gems_1200', 'gems_2600', 'gems_7000', 'gems_15000', 'coins_1000', 'coins_6000', 'coins_15000', 'coins_40000'];
   const NON_CONSUMABLE = ['starter', 'bundle_hero', 'bundle_adv', 'bundle_legend', 'bundle_god', 'noads'];
 
-  let store = null; const pending = {};
+  let store = null; const pending = {}; const waiting = [];
+  // products waiting for Ask to Buy approval: buy(id) answers 'pending' for them instead of ordering again
+  const deferred = new Set();
   function settle(id, ok) { if (pending[id]) { pending[id](ok); delete pending[id]; } }
+  // Hands an approved purchase to the game (window.FlixGrant skips transactions it already gave) and only then lets it be finished,
+  // so a purchase is never lost if the app closes mid-way. A transaction that arrives before the game is ready waits.
+  function deliver(t) {
+    const grant = window.FlixGrant; if (!grant) return false;
+    for (const p of t.products) { deferred.delete(p.id); try { grant(p.id, t.transactionId || null); } catch (e) { console.warn('grant', e); } settle(p.id, true); }
+    return true;
+  }
+  function flush() { if (!window.FlixGrant) return; for (const t of waiting.splice(0)) if (deliver(t)) t.verify(); syncOwned(); }
+  // one-time packs the store reports as owned (e.g. "No Ads" after a reinstall) are handed to the game once per launch
+  const synced = new Set();
+  function syncOwned() {
+    if (!store || !window.FlixGrant) return;
+    for (const id of NON_CONSUMABLE) if (!synced.has(id) && store.owned(id)) { synced.add(id); try { window.FlixGrant(id, null); } catch (e) {} }
+  }
   function initStore() {
     if (!window.CdvPurchase) { console.warn('CdvPurchase missing'); return; }
     const {store: S, ProductType, Platform} = window.CdvPurchase;
@@ -27,14 +43,18 @@
       ...NON_CONSUMABLE.map(id => ({id, type: ProductType.NON_CONSUMABLE, platform}))
     ]);
     // Receipts are checked on the device. For stronger anti-cheat add a server validator (e.g. RevenueCat or iaptic) via S.validator.
-    // every paid transaction is handed to the game (FlixGrant skips ones it already gave), then finished.
-    // This also covers purchases that complete later: app closed mid-payment, "Ask to Buy", slow networks.
-    S.when().approved(t => t.verify()).verified(r => r.finish())
-      .finished(t => { for (const p of t.products) { try { if (window.FlixGrant) window.FlixGrant(p.id, t.transactionId || null); } catch (e) {} settle(p.id, true); } })
-      .productUpdated(() => { try { if (window.onStorePrices) window.onStorePrices(); } catch (e) {} });
+    // Every paid transaction (also ones that complete later: app closed mid-payment, "Ask to Buy", slow networks) reaches the game first, then is finished.
+    let priceTimer = 0;
+    S.when()
+      .approved(t => { if (deliver(t)) t.verify(); else waiting.push(t); })
+      .pending(t => { for (const p of t.products) { deferred.add(p.id); settle(p.id, 'pending'); } })
+      .verified(r => r.finish())
+      .productUpdated(() => { clearTimeout(priceTimer); priceTimer = setTimeout(() => { try { if (window.onStorePrices) window.onStorePrices(); } catch (e) {} }, 300); syncOwned(); })
+      .receiptUpdated(syncOwned);
     S.error(e => { console.warn('store error', e); for (const id in pending) settle(id, false); });
     S.initialize([platform]);
     store = S;
+    const iv = setInterval(() => { if (window.FlixGrant) { clearInterval(iv); flush(); } }, 500);
   }
 
   // Map the game's buzz(ms) to native impacts: short taps light, kills medium, bosses heavy.
@@ -54,19 +74,24 @@
   }
 
   window.FlixNative = {
+    // resolves true (bought), false (cancelled / failed / store unavailable) or 'pending' (waiting for Ask to Buy approval)
     buy(id) {
       return new Promise(res => {
+        if (deferred.has(id)) return res('pending');
         if (!store) return res(false);
         const prod = store.get(id), offer = prod && prod.getOffer();
         if (!offer) return res(false);
+        if (pending[id]) return res(false);
         pending[id] = res;
-        offer.order().then(err => { if (err) settle(id, false); });
+        offer.order().then(err => { if (err) settle(id, false); }, () => settle(id, false));
       });
     },
+    // resolves with the owned one-time pack ids ([] when there is nothing to restore); rejects when the store can't be reached
     async restore() {
-      if (!store) return [];
-      await store.restorePurchases();
-      return NON_CONSUMABLE.filter(id => store.get(id) && store.get(id).owned);
+      if (!store) throw new Error('store unavailable');
+      const err = await store.restorePurchases();
+      if (err) throw err;
+      return NON_CONSUMABLE.filter(id => store.owned(id));
     },
     // localized price string from the store, e.g. "₺44,99"; null until the store has loaded
     price(id) { const p = store && store.get(id); return p && p.pricing ? p.pricing.price : null; },
@@ -74,7 +99,7 @@
     showRewardedAd
   };
 
-  document.addEventListener('deviceready', initStore, false);
+  document.addEventListener('deviceready', () => { try { initStore(); } catch (e) { console.warn('store init', e); store = null; } }, false);
   
   if (P.StatusBar) P.StatusBar.hide().catch(() => {});
 })();

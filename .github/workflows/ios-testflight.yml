@@ -15,7 +15,7 @@ on:
       version:
         description: 'Version shown in the App Store (e.g. 1.0)'
         required: true
-        default: '1.2'
+        default: '1.3'
 jobs:
   upload:
     runs-on: macos-latest
