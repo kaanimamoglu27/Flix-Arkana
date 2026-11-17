@@ -1,5 +1,7 @@
 # ARKANA: Son güncelleme ve App Store paketi (v31, 2026-10-16)
 
+**Satın alma düzeltmesi (2026-11-17):** ödeme ekranı açılır açılmaz kalıcı ürün veriliyordu, ödemeyi kapatsan bile kalıyordu. cordova-plugin-purchase ödeme ekranı açıkken geçici bir "virtual" işlem oluşturuyor ve `store.owned()` onu sahip olunmuş sayıyor. `native-bridge.js` artık sadece gerçek, onaylanmış ya da bitmiş işlemlere bakıyor (`realOwned`).
+
 Önceki sürüm (v30) `arkana-v30.html`, kaynak `arkana10.html`.
 
 - Sonsuz mod: her 10 dalgada düşman canı ve hasarı %10 artar, 50. dalgadan sonra sabit kalır (51+ dalgalar 41-50 döngüsünü tekrarlar). Sabit duran oyuncu artık 5-7. dalgada ölüyor.
