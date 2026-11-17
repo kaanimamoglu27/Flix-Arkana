@@ -78,7 +78,7 @@
   }
   function trackingStatus() { return A.trackingAuthorizationStatus().then((t) => t && t.status, () => null); }
   function pause(ms) { return new Promise((r) => setTimeout(r, ms)); }
-  // Apple's "Allow tracking?" question. Asked BEFORE AdMob starts, so no ad SDK collects anything first.
+  // Apple's "Allow tracking?" question. Asked after Google's consent message and BEFORE AdMob starts, so no ad SDK collects anything first.
   async function askTracking() {
     for (let tries = 0; tries < 4; tries++) {
       if ((await trackingStatus()) !== 'notDetermined') return;   // answered before, or tracking turned off in Settings
@@ -90,13 +90,15 @@
   }
 
   async function init() {
-    if (ios && CFG.requestTracking) await askTracking();
-    // Google's consent message (EU / UK only), after Apple's question
+    // Order matters (Apple rejected FLIX Jump 1.3.5 under Guideline 5.1.1(iv), 17 Nov 2026): Google's consent message
+    // (EU / UK / CH only) comes FIRST, then Apple's "Allow tracking?" question, then AdMob starts. Asking Google's
+    // tracking question after the player already chose "Ask App Not to Track" read as asking twice.
     try {
       let c = await A.requestConsentInfo();
-      if (c && c.isConsentFormAvailable && c.status === 'REQUIRED') c = await A.showConsentForm();
+      if (c && c.isConsentFormAvailable && c.status === 'REQUIRED') { if (ios) await whenActive(); c = await A.showConsentForm(); }
       consentInfo(c);
     } catch (e) {}
+    if (ios && CFG.requestTracking) await askTracking();
     announcePrivacy();
     try {
       await A.initialize({initializeForTesting: units.rewarded.isTesting || units.inter.isTesting || (CFG.testDevices || []).length > 0, testingDevices: CFG.testDevices || []});
