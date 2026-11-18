@@ -1,5 +1,7 @@
 # ARKANA: Son güncelleme ve App Store paketi (v31, 2026-10-16)
 
+**Yeni silah düzeltmesi (2026-11-18):** v44'teki efsane silahlar sadece her 5. dalganın başında geliyordu, oyuncunun gördüğü "Seviye 5! / 10! / 15!" (kahraman seviyesi, Kademe ile aynı anda) hiçbir silah getirmiyordu. Artık her 5 kahraman seviyesinde bir yeni efsane silah gelir (dalga daha öndeyse dalgaya göre, hangisi önce gelirse), atlanan olursa hepsi birden verilir. "YENİ SİLAH" yazısı kart ekranı kapanınca yeniden gösterilir, kart başlığında da yazar. Patron Koşusu'nda yine yok.
+
 **Satın alma düzeltmesi (2026-11-17):** ödeme ekranı açılır açılmaz kalıcı ürün veriliyordu, ödemeyi kapatsan bile kalıyordu. cordova-plugin-purchase ödeme ekranı açıkken geçici bir "virtual" işlem oluşturuyor ve `store.owned()` onu sahip olunmuş sayıyor. `native-bridge.js` artık sadece gerçek, onaylanmış ya da bitmiş işlemlere bakıyor (`realOwned`).
 
 Önceki sürüm (v30) `arkana-v30.html`, kaynak `arkana10.html`.
