@@ -252,6 +252,76 @@ h2{font-family:Bangers,Fredoka,sans-serif;font-weight:400;letter-spacing:2px;col
 .buy.gem{background:#6fd3ff}.buy.gem.poor{background:#e9e5f3}
 #shopGrid .sect{grid-column:1/-1;margin:8px 0 0;font-family:Bangers,Fredoka,sans-serif;font-weight:400;letter-spacing:1px;font-size:20px;text-align:left;color:#120d14}
 #shopGrid{padding-top:12px}
+/* ---- v46 small phones (landscape 568x320, 667x375, 844x390, 926x428): every screen and panel fits, every button stays reachable ---- */
+.screen>.panel{max-height:100%;overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:0 1 auto}
+/* the closing button of a panel that still has to scroll stays in view */
+#settings .panel>.row:last-child,#how .panel>.btn.main{position:sticky;bottom:-16px;z-index:1}
+#settings .panel>.row:last-child{background:#fff;margin:6px -20px -16px!important;padding:6px 20px 12px;border-radius:0 0 14px 14px}
+/* shop: the wallet never runs off the panel, "Bitti" no longer covers the cards (it sits under the hint on the left) */
+.shopH b{min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shopH .wallet{flex:none}
+#shopGrid{padding-bottom:16px}
+#bShopDone{right:auto;left:16px;bottom:16px}
+.shopHint{bottom:84px}
+/* web demo purchase confirm */
+#payL{position:absolute;inset:0;z-index:45;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(18,13,20,.62)}
+#payL.on{display:flex}
+#paySheet{width:min(380px,100%);max-height:100%;overflow-y:auto;text-align:center;background:#fff;padding:14px 18px 16px}
+#paySheet .ph{font-size:12px;font-weight:800;letter-spacing:1.4px;opacity:.6}
+#payT{font-weight:800;font-size:20px;margin-top:4px}
+#payP{font-family:Bangers,Fredoka,sans-serif;font-size:40px;letter-spacing:1px;line-height:1.1;color:#e22511}
+#payD{font-size:13px;font-weight:600;color:var(--soft);line-height:1.25}
+#paySheet .demo{margin-top:10px;background:#fff3c4;border:2px dashed #c78f00;border-radius:12px;padding:6px 10px;font-size:12px;font-weight:700;line-height:1.3}
+#paySheet .row{margin-top:12px;flex-wrap:nowrap}#paySheet .row .btn{flex:1}
+#paySheet .btn.ok{background:linear-gradient(180deg,#b6fbe6,#3ee6b5)}
+/* web, phone held upright (the game turns itself sideways): the flip button sits above Nasıl / Ayarlar, clear of the wallet */
+html.rot #bFlip{left:14px;top:auto;bottom:70px;transform:none}
+/* html.sm / html.xs / html.wide are set by layout() from the logical game size (also when a phone held upright
+   turns the game sideways): sm = phone landscape height <= 430, xs <= 340 */
+/* menu: the hero buttons stay below the gold / diamond counters */
+html.sm .mTop{top:8px}
+html.sm .mSide{bottom:10px;gap:7px}
+html.sm .heroPick{gap:8px}html.sm .heroPick button{width:40px;height:40px;font-size:20px;border-width:2px;box-shadow:2px 3px 0 #120d14}
+html.sm .who{padding:4px 10px}html.sm .who b{font-size:15px}html.sm .who b span{font-size:11px!important}html.sm .who small{font-size:11px}
+html.sm .mSide .btn.main{font-size:27px;padding:3px 20px;min-height:0}
+html.sm .mSide .btn.shopb{font-size:20px;padding:3px 16px;min-height:0}
+html.sm .best{font-size:11px}
+html.sm .mFoot{bottom:10px}html.sm .mFoot .btn.small{min-height:38px;padding:4px 14px}
+/* panels */
+html.sm .panel{padding:10px 16px}
+html.sm .panel h2,html.sm #modes h2,html.sm #cards h2{font-size:28px}
+html.sm .btn.small{min-height:36px;font-size:14px;padding:4px 14px}
+html.sm .panel .btn.main{font-size:24px;padding:4px 34px;min-height:44px}
+html.sm .panel .row{gap:8px}
+html.sm #settings .note{font-size:13px;margin:0 0 5px!important}
+html.sm #settings .panel>.row{margin-top:7px!important}
+html.sm #settings .panel>.row:last-child{margin:4px -16px -10px!important;padding:5px 16px 9px;bottom:-10px}
+html.sm .ctrls{grid-template-columns:repeat(3,minmax(110px,180px));gap:8px}
+html.sm .ctrls button{padding:4px 6px 6px;box-shadow:0 4px 0 var(--ink)}
+html.sm .ctrls i{font-size:21px}html.sm .ctrls b{font-size:15px}html.sm .ctrls span{font-size:11px;line-height:1.15}
+html.sm #over .note,html.sm #revive .note{font-size:13px;margin:3px 0 6px!important}
+html.sm .stats{grid-template-columns:repeat(4,auto);font-size:14px;gap:0 12px}
+html.sm .reward{font-size:16px;margin:0 0 6px;padding:2px 12px}
+html.sm #over .panel>.row{margin-top:6px!important}
+/* mode select: 2 (wide phones 3) columns of compact cards, "Geri" in the top-left corner, the list scrolls if needed */
+html.sm #modes{justify-content:flex-start}
+html.sm #modes .row{position:absolute;left:max(14px,var(--sl));top:max(10px,var(--st))}
+html.sm .modes{grid-template-columns:repeat(2,minmax(0,1fr));width:min(760px,100%);overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:0 1 auto;gap:8px;padding:2px 9px 10px 2px}
+html.sm .modes .mode{display:grid;grid-template-columns:auto 1fr;column-gap:10px;row-gap:1px;align-items:center;justify-items:start;text-align:left;padding:6px 10px}
+html.sm .modes .mode i{grid-row:1/span 3;font-size:30px}html.sm .modes .mode b{font-size:21px;line-height:1}html.sm .modes .mode span{font-size:11.5px}html.sm .modes .mode small{font-size:10.5px;padding:0 8px;margin:0}
+/* shop */
+html.sm .shopP{top:6px;bottom:6px;width:min(580px,64%);padding:6px 10px 0}
+html.sm .shopH b{font-size:18px}
+html.sm .shopH .pill{font-size:14px;padding:2px 8px;border-width:2px;box-shadow:2px 3px 0 #120d14}
+html.sm .shopH .pill::after{width:16px;height:16px;line-height:15px;font-size:13px;margin-left:4px}
+html.sm #shopTabs{padding:5px 0 4px;gap:4px}html.sm #shopTabs button{padding:4px 9px;font-size:12px}
+html.sm #bShopDone{font-size:19px;padding:4px 30px;min-height:44px;left:12px;bottom:10px}
+html.sm .shopHint{font-size:11px;bottom:66px;left:12px;width:calc(36% - 34px)}
+/* level-up cards */
+html.sm .cards{gap:10px}html.sm .card{min-width:150px}
+html.sm.wide .modes{grid-template-columns:repeat(3,minmax(0,1fr))}
+/* the smallest phones (568x320): the walking modes show icon + name only, so Ayarlar fits without scrolling */
+html.xs .ctrls button{flex-direction:row;justify-content:center;gap:6px;padding:5px 6px 6px}html.xs .ctrls span{display:none}html.xs .ctrls i{font-size:19px}
 </style>
 </head>
 <body>
@@ -302,6 +372,11 @@ h2{font-family:Bangers,Fredoka,sans-serif;font-weight:400;letter-spacing:2px;col
     <button class="btn main" id="bShopDone">Bitti</button>
   </section>
   <div id="toast"></div>
+  <div id="payL" role="dialog" aria-modal="true" aria-labelledby="payT"><div class="panel" id="paySheet">
+    <div class="ph">SATIN AL</div><div id="payT"></div><div id="payP"></div><div id="payD"></div>
+    <div class="demo">DEMO · Bu web demosu, gerçek ödeme alınmaz. Uygulamada ödeme App Store ile yapılır.</div>
+    <div class="row"><button class="btn small" id="payNo">Vazgeç</button><button class="btn small ok" id="payOk">Onayla</button></div>
+  </div></div>
 
   <section class="screen dim" id="modes">
     <h2>Mod seç</h2>
@@ -318,7 +393,7 @@ h2{font-family:Bangers,Fredoka,sans-serif;font-weight:400;letter-spacing:2px;col
         <div><span class="e">🏙️</span><b>Şehri kullan</b>Binalar okları durdurur, dev iskeleti duvara çarptır.</div>
         <div><span class="e">🌷</span><b>FLIX gücü</b>Daire dolunca bas: dev Flix figürü her şeyi süpürür!</div>
       </div>
-      <p class="note" style="margin:10px 0">Kristal topla, seviye atla, 20 güçten seç. 💨 ile atıl, arabaları patlatıp yol aç. Hikayede 40 seviye: her 10 seviyede bir patron gelir ve zorluk artar. 40. seviyede VORTEKS ile final savaşı!</p>
+      <p class="note" style="margin:10px 0">Kristal topla, güçlen (⚡), 20 güçten seç. 💨 ile atıl, arabaları patlatıp yol aç. Hikayede 40 seviye: her 10 seviyede bir patron gelir ve zorluk artar. 40. seviyede VORTEKS ile final savaşı!</p>
       <button class="btn main" id="bHowOk">Hadi başlayalım!</button>
     </div>
   </section>
@@ -339,7 +414,7 @@ h2{font-family:Bangers,Fredoka,sans-serif;font-weight:400;letter-spacing:2px;col
   </section>
 
   <section class="screen dim" id="cards">
-    <h2 id="cardsTitle">Seviye atladın!</h2>
+    <h2 id="cardsTitle">⚡ Güç arttı!</h2>
     <div class="cards" id="cardList"></div>
   </section>
 
@@ -408,6 +483,8 @@ function layout() {
   const W = ROT ? innerHeight : innerWidth, H = ROT ? innerWidth : innerHeight;
   // tablets (iPad): the whole game is laid out at phone size and scaled up, so buttons, text and characters stay big
   UI = isTouch ? clamp(Math.min(W, H) / 430, 1, 1.8) : 1; LW = W / UI; LH = H / UI;
+  // compact layout for small phones (landscape 568x320 ... 932x430, also when turned sideways), see html.sm in the styles
+  const dc = document.documentElement.classList, sm = UI === 1 && LH <= 430; dc.toggle('sm', sm); dc.toggle('xs', sm && LH <= 340); dc.toggle('wide', LW >= 800);
   const w = $('wrap'); w.style.width = LW + 'px'; w.style.height = LH + 'px'; const sc = UI !== 1 ? ` scale(${UI})` : '';
   w.style.transform = (ROT === 90 ? `translate(${innerWidth}px,0) rotate(90deg)` : ROT === -90 ? `translate(0,${innerHeight}px) rotate(-90deg)` : '') + sc || 'none';
   document.documentElement.classList.toggle('rot', !!ROT);
@@ -1910,7 +1987,15 @@ function buyPack(id) {
   const p = PACKS.find(q => q.id === id); if (!p || (p.once && own('iap', id))) return;
   // in the app the bridge calls FlixGrant for every paid transaction (also ones that finish later, e.g. after a restart or "Ask to Buy")
   if (window.FlixNative && FlixNative.buy) FlixNative.buy(id).then(ok => { if (ok === 'pending') toast('Satın alma onay bekliyor. Onaylanınca otomatik eklenecek.'); else if (!ok) toast('Satın alma tamamlanmadı.'); }).catch(() => toast('Satın alma tamamlanmadı.'));
-  else FlixGrant(id, 'web' + Date.now());
+  else payDemo(p);
+}
+// web only: a clearly marked demo confirm (like Flix Atış), no money is taken; the app path above is unchanged
+function payDemo(p) {
+  $('payT').textContent = p.ic + ' ' + p.n; $('payP').textContent = p.price; $('payD').textContent = p.tag || '';
+  $('payL').classList.add('on'); SFX.card();
+  const close = () => $('payL').classList.remove('on');
+  $('payNo').onclick = () => { close(); SFX.card(); };
+  $('payOk').onclick = () => { close(); FlixGrant(p.id, 'web' + Date.now()); };
 }
 // gives a paid pack exactly once per App Store transaction (one-time packs only once ever)
 window.FlixGrant = function (id, tx) {
@@ -3072,11 +3157,13 @@ function showCards() {
   // when the build is full (or past level 25) the cards keep coming as endless power-ups
   const extra = [{type: 'dmg', ic: '💥', name: 'Güç Kristali', lv: 0, desc: 'Tüm hasar +4%'}, {type: 'mhp', ic: '❤️', name: 'Dev Kalp', lv: 0, desc: '+10 maksimum can, canın yarısı dolar'}, {type: 'spd2', ic: '💨', name: 'Rüzgar Tüyü', lv: 0, desc: 'Hız +4%'}, {type: 'cd2', ic: '⏳', name: 'Zaman Kumu', lv: 0, desc: 'Güçler %4 daha sık'}, {type: 'heal', ic: '🍓', name: 'Çilek', lv: 0, desc: 'Canın tamamen dolar'}, {type: 'gold', ic: '🪙', name: 'Altın Kesesi', lv: 0, desc: '+40 altın'}];
   while (pick.length < 3) pick.push(extra.splice(Math.floor(Math.random() * extra.length), 1)[0]);
-  const lvShow = lvNow, LN = G.legNew && WEAP[G.legNew]; G.legNew = null; $('cardsTitle').textContent = LN ? (wp ? `${LN.ic} Yeni silah: ${LN.n}! Şimdi bir silahını güçlendir` : `Seviye ${lvShow}! ${LN.ic} Yeni silah: ${LN.n}`) : wpLv && pick.some(c => c.type === 'w') ? `Seviye ${lvShow}! 🎁 Silah seçimi` : wp ? '🎁 Silah seçimi!' : lvShow > 25 ? `Seviye ${lvShow}! Sonsuz güç` : `Seviye ${lvShow}!`;
+  const lvShow = lvNow, LN = G.legNew && WEAP[G.legNew]; G.legNew = null; const wpCards = wp && pick.some(c => c.type === 'w');
+  // the hero (XP) level is "Güç" like on the game-over screen; "Seviye" stays the story wave of the HUD (Sv N/40)
+  $('cardsTitle').textContent = LN ? (wp ? `${LN.ic} Yeni silah: ${LN.n}! Bir kart seç` : `⚡ Güç ${lvShow}! ${LN.ic} Yeni silah: ${LN.n}`) : wpLv && wpCards ? `⚡ Güç ${lvShow}! 🎁 Silah seçimi` : wpCards ? '🎁 Silah seçimi!' : lvShow > 25 ? `⚡ Güç ${lvShow}! Sonsuz kartlar` : `⚡ Güç ${lvShow}!`;
   const list = $('cardList'); list.innerHTML = '';
   for (const c of pick) {
     const b = document.createElement('button'); b.className = 'card ' + (c.type === 'p' || c.type === 'c' ? 'p' : 'w');
-    const lvTxt = c.lv === 1 ? '<span class="lv new">YENİ!</span>' : c.lv ? `<span class="lv">Seviye ${c.lv}</span>` : '';
+    const lvTxt = c.lv === 1 ? '<span class="lv new">YENİ!</span>' : c.lv ? `<span class="lv">★ ${c.lv}/5</span>` : '';
     b.innerHTML = `<span class="ic">${c.ic}</span><b>${c.name}</b>${lvTxt}<span>${c.desc}</span>`;
     b.onclick = () => { applyCard(c); SFX.card(); hideScreens(); G.state = 'play'; if (G.pending > 0) showCards(); else if (G.legBan) { banner(G.legBan[0], G.legBan[1], 3); G.legBan = null; } };
     list.appendChild(b);
@@ -3206,14 +3293,15 @@ window.addEventListener('keyup', e => { input.keys[e.code] = false; });
 $('bFlix').addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); initAudio(); const b = $('bFlix'); b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 120); if (!useFlix()) G.flixQ = 0.45; });
 $('bFlix').addEventListener('contextmenu', e => e.preventDefault()); $('bDash').addEventListener('pointerdown', e => { e.stopPropagation(); dash(); });
 
-// drag to scroll the shop grid (works in the self-rotated layout too)
-{ const gr = $('shopGrid'); let sy = null, st0 = 0, moved = 0;
+// drag to scroll (works in the self-rotated layout too, the page itself has touch-action:none): the shop grid and, on
+// small phones (568x320 ...), every panel or list that is taller than the screen
+function dragScroll(gr) { let sy = null, st0 = 0, moved = 0;
   gr.addEventListener('pointerdown', e => { sy = lpt(e).y; st0 = gr.scrollTop; moved = 0; });
-  gr.addEventListener('pointermove', e => { if (sy === null) return; const dy = lpt(e).y - sy; moved = Math.max(moved, Math.abs(dy)); gr.scrollTop = st0 - dy; });
+  gr.addEventListener('pointermove', e => { if (sy === null) return; const dy = lpt(e).y - sy; moved = Math.max(moved, Math.abs(dy)); if (moved > 4) gr.scrollTop = st0 - dy; });
   const up = () => { sy = null; }; gr.addEventListener('pointerup', up); gr.addEventListener('pointercancel', up); gr.addEventListener('pointerleave', up);
-  gr.addEventListener('click', e => { if (moved > 8) { e.stopPropagation(); e.preventDefault(); } }, true);
-  gr.addEventListener('wheel', e => { gr.scrollTop += e.deltaY; }, {passive: true});
-  $('shopTabs').addEventListener('wheel', e => { $('shopTabs').scrollLeft += e.deltaY; }, {passive: true}); }
+  gr.addEventListener('click', e => { if (moved > 8) { e.stopPropagation(); e.preventDefault(); } }, true); }
+dragScroll($('shopGrid')); dragScroll($('modeList')); for (const p of document.querySelectorAll('.screen .panel')) dragScroll(p);
+$('shopTabs').addEventListener('wheel', e => { $('shopTabs').scrollLeft += e.deltaY; }, {passive: true});
 
 /* ---------- render ---------- */
 let camX = 0, camZ = 0, menuAng = 0;
@@ -5397,7 +5485,8 @@ initGL();
 if (!R.on) document.querySelector('#menu .note').textContent = 'Bu cihazda 3D (WebGL) açılamadı.';
 layout(); updateMenu(); screen('menu');
 requestAnimationFrame(frame);
-window.ARKANA = {G, input, add: addEnemy, newRun, update, showCards, applyCard, cardOptions, startWave, useFlix, get state() { return G.state; }};
+// QA/debug hook: web builds only (the QA tools use it there); in the native app only with ?debug
+if (!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || /[?&]debug\b/.test(location.search)) window.ARKANA = {G, input, add: addEnemy, newRun, update, showCards, applyCard, cardOptions, startWave, useFlix, get state() { return G.state; }};
 </script>
 <script>/* FLIX legal */
 /* FLIX TOYS · Yasal Bilgiler / Legal & Information (shared by Flix Atış, Fabrika, Arkana, Sen Olsaydın/Direktör).
