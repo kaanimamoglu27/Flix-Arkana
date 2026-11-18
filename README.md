@@ -1,3 +1,15 @@
+# ARKANA: 6 dil, her modda 5 seviyede bir silah, ayrıntılı Nasıl oynanır (2026-11-18)
+
+- **Diller:** Türkçe (varsayılan), English, Français, Deutsch, Español, العربية. Seçim ⚙️ Ayarlar'daki 🌐 Dil satırında, cihazda saklanır (`localStorage.flixLang`). Oyun açılışta her zaman Türkçe başlar, oyuncu başka dil seçerse o dil hatırlanır.
+- Çeviri katmanı `i18n/`: oyunun Türkçe metni kaynak. `flix-i18n.js` ekrandaki her yazıyı (HTML, düğmeler, canvas yazıları, çizgi roman balonları) `i18n/ceviri_*.tsv` tablosundan bulup seçili dilde gösterir. Tablo satırı: `tr<TAB>en<TAB>fr<TAB>de<TAB>es<TAB>ar`. Sayılı metinler tek satırla çözülür ("Dalga 1" satırı "Dalga 27"yi de çevirir). Yeni metin eklenince tabloya satır ekleyip `python3 i18n/apply_i18n.py` çalıştır (index.html'deki `FLIX-I18N` bloğunu yeniler), sonra `python3 app/tools/build_www.py`.
+- Çizgi roman yazıları satırlara bölünmeden önce çevriliyor (`cmUp`), böylece her dilde balonlar doğru kırılıyor. Arapçada yazılar sağdan sola.
+- **Her 5 seviyede yeni silah, tüm modlarda:** Hikaye, Sonsuz, Cehennem ve Flix Avı'nda her 5 dalgada 8 efsanevi silahtan biri geliyordu; Patron Koşusu'nda hiç gelmiyordu. Artık Patron Koşusu'nda da karakter 5, 10, 15... seviyeye çıktığında yeni efsanevi silah veriliyor (`legGift(n, force)`, `gainXp`).
+- **Nasıl oynanır** ayrıntılandı: 4 kartın altında kaydırılabilir bölümler (kontroller ve atılma, seviye ve kartlar, 5 seviyede bir silah ve 8 silahın adı, FLIX gücü, 5 modun kuralları, uyarı işaretleri, oynanışı değiştiren haritalar, reklamla devam, altın ve elmas).
+- Ayarlar paneli küçük ekranlarda kaydırılabilir (dil satırı eklenince yatay telefonda taşıyordu).
+- Reklamlar kontrol edildi, değişiklik gerekmedi: ödüllü reklam sadece ölünce ve isteğe bağlı (oyun başına bir kez), geçiş reklamı sadece sonuç ekranından çıkarken (ilk 2 oyundan sonra, en az 2 oyunda bir, en az 3 dakika arayla), Reklamsız + VIP'te hiç reklam yok.
+
+---
+
 # ARKANA: Son güncelleme ve App Store paketi (v31, 2026-10-16)
 
 **Satın alma düzeltmesi (2026-11-17):** ödeme ekranı açılır açılmaz kalıcı ürün veriliyordu, ödemeyi kapatsan bile kalıyordu. cordova-plugin-purchase ödeme ekranı açıkken geçici bir "virtual" işlem oluşturuyor ve `store.owned()` onu sahip olunmuş sayıyor. `native-bridge.js` artık sadece gerçek, onaylanmış ya da bitmiş işlemlere bakıyor (`realOwned`).
