@@ -47,6 +47,7 @@
     var s = String(text); if (!LETTER.test(s)) return text;
     var c = cache.get(s); if (c !== undefined) return c;
     var I = build(lang), m = s.match(/^(\s*)([\s\S]*?)(\s*)$/), core = norm(m[2]), out = look(I, core);
+    if (out == null) { var pf = core.match(/^([^\p{L}\p{N}]+)([\s\S]+)$/u); if (pf) { var rp = look(I, pf[2]); if (rp != null) out = pf[1] + rp; } }
     if (out == null) { var e = core.match(EDGE); if (e && e[2]) { var r = look(I, e[2]); if (r != null) out = e[1] + r + e[3]; } }
     if (out == null && I.re) {
       out = core.replace(I.re, function (w) { var r = I.ex.get(w); return r != null ? r : w; });
