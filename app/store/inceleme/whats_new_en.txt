@@ -1,0 +1,6 @@
+• Tougher fights: enemies and bosses hit harder and last longer, bosses are now a real challenge.
+• Health matters more: strawberry cards and hearts are rarer, but still save your run.
+• New legendary weapons arrive every 5 levels.
+• Better menu and game layout on smaller iPhones.
+• Watch-an-ad-to-continue now works reliably.
+• More reliable purchases: items are delivered even if the payment sheet is closed, and Ask to Buy is supported.

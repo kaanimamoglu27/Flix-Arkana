@@ -1,0 +1,9 @@
+Thank you for reviewing Flix Arkana.
+
+No account or login is needed. The game works fully offline. The game UI is in Turkish. Tap "OYNA" (Play) on the main menu and choose a mode; the hero attacks automatically while you move with one finger.
+
+What changed in this version: game balance (enemies and bosses are tougher, healing items are rarer), new legendary weapons every 5 levels, a better layout on small iPhone screens, a fix for the rewarded ad, and more reliable in-app purchase delivery.
+
+Privacy and ads: on first launch the Google consent message (UMP) is shown first, then the App Tracking Transparency prompt. Declining either does not change gameplay. The only ad is an optional rewarded video offered once per run after the player dies ("Reklam izle, devam et" = "Watch ad, continue"). The "Reklamsız + VIP" (No Ads + VIP) purchase removes it.
+
+In-app purchases: open the Shop ("🛒 Mağaza") from the main menu. Consumables (gems, coins, mini bundle) and non-consumables (starter pack, hero and adventure bundles, No Ads + VIP). Purchases are delivered to the game before the transaction is finished, Ask to Buy is supported, and the Restore Purchases link ("Satın alımları geri yükle") is in the Shop. All items can also be earned with in-game currency; purchases only speed things up.

@@ -1,0 +1,52 @@
+# Sends an ARKANA version to App Store review. No Mac needed.
+# Run after "iOS TestFlight": Actions > "iOS Submit for Review" > Run workflow (same version).
+# It waits until the TestFlight build of that version has finished processing, then fills in
+# What's New (app/store/inceleme/whats_new_*.txt) and the review notes (review_notes.txt),
+# attaches the build and submits. Uses the same ASC_* secrets as the TestFlight workflow.
+name: iOS Submit for Review
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to submit (same as the TestFlight run, e.g. 1.3.3)'
+        required: true
+        default: '1.3.3'
+      cancel_pending:
+        description: 'If an older version is waiting for review, cancel it and send this one instead'
+        type: boolean
+        default: true
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: Check secrets
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          for v in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do [ -n "${!v}" ] || { echo "::error::Secret $v is missing"; exit 1; }; done
+      - uses: actions/checkout@v4
+      - run: pip install pyjwt cryptography
+      - name: App Store Connect key
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s\n' "$ASC_KEY_P8" > "$RUNNER_TEMP/keys/AuthKey_$ASC_KEY_ID.p8"
+          echo "KEY_PATH=$RUNNER_TEMP/keys/AuthKey_$ASC_KEY_ID.p8" >> "$GITHUB_ENV"
+      - name: Submit for review
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          VERSION: ${{ inputs.version }}
+          CANCEL_PENDING: ${{ inputs.cancel_pending && '1' || '0' }}
+          BUNDLE_ID: com.flixtoys.arkana
+          BUILD_WAIT_MIN: '85'
+        run: |
+          export WHATS_NEW_TR="$(cat app/store/inceleme/whats_new_tr.txt)"
+          export WHATS_NEW_EN="$(cat app/store/inceleme/whats_new_en.txt)"
+          export REVIEW_NOTES="$(cat app/store/inceleme/review_notes.txt)"
+          python3 app/tools/asc_submit.py
