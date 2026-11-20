@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to submit (same as the TestFlight run, e.g. 1.3.3)'
+        description: 'Version to submit (same as the TestFlight run, e.g. 1.3.4)'
         required: true
-        default: '1.3.3'
+        default: '1.3.4'
       cancel_pending:
         description: 'If an older version is waiting for review, cancel it and send this one instead'
         type: boolean

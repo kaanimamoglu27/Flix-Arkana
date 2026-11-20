@@ -1,6 +1,3 @@
-• Daha çetin savaşlar: düşmanlar ve patronlar güçlendi, patronları devirmek artık gerçek bir mücadele.
-• Can daha değerli: çilek kartı ve kalpler daha seyrek, ama hâlâ hayat kurtarıyor.
-• Yeni efsane silahlar her 5 seviyede bir geliyor.
-• Küçük ekranlı iPhone'larda menü ve oyun düzeni iyileştirildi.
-• Ödüllü reklamla devam etme artık sorunsuz çalışıyor.
-• Satın alımlar daha güvenilir: ödeme ekranı kapansa da ürün teslim edilir, "Satın almayı sor" desteklenir.
+• Daha çetin savaşlar: tüm düşmanlar daha dayanıklı ve daha sert vuruyor.
+• Patronlar yaklaşık iki kat güçlü; onları devirmek artık gerçek bir mücadele.
+• Can daha değerli: çilek kartı canı tamamen doldurmuyor ve daha seyrek çıkıyor, kalpler de daha az düşüyor.
