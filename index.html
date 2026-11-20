@@ -2149,6 +2149,7 @@ function tierOf(n) { return Math.floor((n - 1) / 10); }
 const DIFF = [{n: 'Kolay', hp: 0.72, dmg: 0.65, cnt: 0.85}, {n: 'Orta', hp: 1, dmg: 1, cnt: 1}, {n: 'Zor', hp: 1.3, dmg: 1.3, cnt: 1.12}, {n: 'Çok Zor', hp: 1.7, dmg: 1.65, cnt: 1.25}];
 // one fixed difficulty for everyone (the Kolay/Zor setting was removed)
 function DF() { return DIFF[1]; }
+const HARD = 1.15; // v45: Kaan, enemies and bosses 15% tougher
 function isEnd() { return G.mode === 'endless' || G.endless; }
 // endless: +10% every 10 waves and nothing more after wave 50 (waves 51+ replay the 41-50 cycle at the same strength)
 // Sonsuz mode (and the endless run after the story) is 25% tougher: enemies have 25% more health and hit 25% harder
@@ -2381,7 +2382,7 @@ function spawnPos(rad) {
 }
 function addEnemy(type, x, z, rise) {
   if (G.enemies.length >= Math.min(MAXE - 2, type === 'boss' ? MAXE : ECAP())) return null;
-  const T = ET[type], hp = Math.round(T.hp * G.def.hpMul * (G.mode === 'story' && !G.endless ? 1 + Math.max(0, G.wave - 8) * 0.05 : 1) * (isEnd() ? 1 + Math.max(0, Math.min(G.wave, 50) - 15) * 0.05 : 1) * DF().hp * END25() * (G.mode === 'hell' ? 1 + Math.max(0, G.wave - 3) * 0.08 : 1));
+  const T = ET[type], hp = Math.round(T.hp * G.def.hpMul * (G.mode === 'story' && !G.endless ? 1 + Math.max(0, G.wave - 8) * 0.05 : 1) * (isEnd() ? 1 + Math.max(0, Math.min(G.wave, 50) - 15) * 0.05 : 1) * DF().hp * HARD * END25() * (G.mode === 'hell' ? 1 + Math.max(0, G.wave - 3) * 0.08 : 1));
   const e = {type, x, z, vx: 0, vz: 0, hp, max: hp, r: T.r, spd: T.spd * rnd(0.9, 1.1) * (1 + (G.def.tier || 0) * 0.04) * (G.mapMod === 'ice' ? 0.82 : 1), dmg: T.dmg, xp: T.xp, fly: T.fly || 0, sz: T.size, t: rnd(0, 6), flash: 0, slow: 0, cd: rnd(1.5, 3), hitCd: {}, navT: 0, tx: G.px, tz: G.pz, los: false, fa: 0, rise: rise === false ? 0 : 0.7, st: 'walk', stT: 0, ph: rnd(0, 4)};
   if (type === 'necro') e.cd = rnd(2, 4);
   if (type === 'burrower') { e.under = true; e.rise = 0; }
@@ -2424,7 +2425,7 @@ function navigate(e) {
 }
 function spawnBoss(B) {
   const [x, z] = spawnPos(15);
-  const hp = Math.round(DF().hp * B.hp * (1 + Math.floor(((G.mode === 'boss' ? G.wave * 10 : isEnd() ? Math.min(G.wave, 50) : G.wave) - 1) / 50) * 1.6) * (G.mode === 'story' && !G.endless ? 1.2 : 1) * END25());
+  const hp = Math.round(DF().hp * B.hp * (1 + Math.floor(((G.mode === 'boss' ? G.wave * 10 : isEnd() ? Math.min(G.wave, 50) : G.wave) - 1) / 50) * 1.6) * (G.mode === 'story' && !G.endless ? 1.2 : 1) * HARD * 1.75 * END25());
   const e = {type: 'boss', boss: B, kind: B.kind, x, z, vx: 0, vz: 0, hp, max: hp, r: B.r, dmg: 18, xp: 0, fly: B.kind === 'dragon' ? 1.6 : B.kind === 'shadow' ? 0.5 : 0, spd: B.spd || (B.kind === 'tyrant' ? 2.3 : 2.1), t: 0, flash: 0, slow: 0, cd: 3, st: 'chase', stT: 0, hitCd: {}, los: true, sz: 1};
   HQSEG = 22; e.g = buildBoss(B); HQSEG = 0; charPatch(e.g, 0.35); e.g.position.set(x, 0, z); R.scene.add(e.g);
   if (B.final) { e.phase = 1; e.dmg = 26; e.spd = B.spd || 2.5; e.cd = 2; G.slowT = 1.6; G.shake = 1.2; buzz(200); }
@@ -2599,7 +2600,7 @@ function pop(e) {
   if (e.type === 'bomber') { if (e.tel) e.tel.t = e.tel.dur + 1; blast(e.x, e.z, 2.6, 26, false); }
   dropGem(e.x, e.z, e.xp);
   if (e.elite) { for (let i = 0; i < 4; i++) dropGem(e.x + rnd(-1.5, 1.5), e.z + rnd(-1.5, 1.5), 6); G.picks.push({x: e.x, z: e.z, gold: true, t: 0}); G.runCoins += 15; banner('', 'Elit düştü! Altın Flix bıraktı', 1.2); }
-  const r = Math.random(); if (r < 0.006) dropItem('heart', e.x, e.z); else if (r < 0.0085) dropItem('magnet', e.x, e.z);
+  const r = Math.random(); if (r < 0.0025) dropItem('heart', e.x, e.z); else if (r < 0.005) dropItem('magnet', e.x, e.z);
   SFX.pop();
 }
 // a bomb going off: hurts skeletons around it, and the hero too when he stands inside
@@ -2620,7 +2621,7 @@ function bossDown(e) {
 function hurt(dmg, src) {
   if (G.inv > 0 || G.state !== 'play' || (G.bst && G.bst.k === 'star')) return;
   const wv = G.mode === 'boss' ? G.wave * 10 : G.mode === 'hell' ? hellWave(G.wave) : isEnd() ? Math.min(G.wave, 50) : G.wave; dmg *= Math.min(1, 0.55 + wv * 0.075) * (1 + tierOf(wv) * 0.2 + Math.max(0, wv - 9) * 0.018); // early waves forgive more, every 10 waves bite harder
-  const sty = G.mode === 'story' && !G.endless; dmg *= (1 - 0.07 * (G.pas.armor || 0)) * (G.mode === 'hell' ? 1.15 : 1) * (sty ? 1.1 + G.wave * 0.008 : 1) * (isEnd() ? 0.8 * endStep(G.wave) : 1) * DF().dmg * END25(); G.hp -= dmg; G.inv = (sty && G.wave > 8) || (isEnd() && G.wave > 4) ? 0.4 : 0.5; G.shake = Math.max(G.shake, 0.35);
+  const sty = G.mode === 'story' && !G.endless; dmg *= (1 - 0.07 * (G.pas.armor || 0)) * (G.mode === 'hell' ? 1.15 : 1) * (sty ? 1.1 + G.wave * 0.008 : 1) * (isEnd() ? 0.8 * endStep(G.wave) : 1) * DF().dmg * HARD * END25(); G.hp -= dmg; G.inv = (sty && G.wave > 8) || (isEnd() && G.wave > 4) ? 0.4 : 0.5; G.shake = Math.max(G.shake, 0.35);
   SFX.hurt(); buzz(40); $('flash').style.opacity = 1; setTimeout(() => $('flash').style.opacity = 0, 140);
   if (src) { const l = Math.hypot(G.px - src.x, G.pz - src.z) || 1; G.kx = (G.px - src.x) / l * 6; G.kz = (G.pz - src.z) / l * 6; }
   if (G.hp <= 0) { G.hp = 0; G.state = 'dying'; G.dieT = 0; G.fell = true; G.slowT = 1.2; banner('', curHero().n + ' yere düştü...', 1.4); }
@@ -2930,7 +2931,7 @@ function update(dt) {
   for (const it of G.items) {
     it.t += dt; it.g.position.y = 0.5 + Math.sin(it.t * 3) * 0.15; it.g.rotation.y += dt * 2;
     if (Math.hypot(G.px - it.x, G.pz - it.z) < 1.2) { it.got = true; R.scene.remove(it.g);
-      if (it.kind === 'heart') { G.hp = Math.min(G.maxHp, G.hp + 30); banner('', '+30 can', 0.8); SFX.card(); }
+      if (it.kind === 'heart') { G.hp = Math.min(G.maxHp, G.hp + 20); banner('', '+20 can', 0.8); SFX.card(); }
       if (it.kind === 'magnet') { for (const g of G.gems) g.pull = true; banner('', 'Mıknatıs! Bütün yıldızlar geliyor', 1); SFX.card(); }
       if (it.kind === 'chest') openChest();
     }
@@ -3141,7 +3142,7 @@ function cardOptions(wpLv) {
 function applyCard(c) {
   if (c.type === 'w') G.weps[c.id] = c.lv; else if (c.type === 'p') { G.pas[c.id] = c.lv; recompute(); }
   else if (c.type === 'c') G.compL = c.lv;
-  else if (c.type === 'heal') G.hp = G.maxHp; else if (c.type === 'gold') G.runCoins = (G.runCoins || 0) + 40;
+  else if (c.type === 'heal') G.hp = Math.min(G.maxHp, G.hp + Math.round(G.maxHp * 0.35)); else if (c.type === 'gold') G.runCoins = (G.runCoins || 0) + 40;
   else if (c.type === 'dmg') G.dmgMul = (G.dmgMul || 1) + 0.04; else if (c.type === 'mhp') { G.hpBonus = (G.hpBonus || 0) + 10; recompute(); G.hp = Math.min(G.maxHp, G.hp + G.maxHp * 0.5); } else if (c.type === 'spd2') { G.spdBonus = (G.spdBonus || 0) + 0.04; recompute(); } else if (c.type === 'cd2') { G.cdBonus = (G.cdBonus || 0) + 0.04; recompute(); }
   updateAbilBar();
 }
@@ -3155,7 +3156,8 @@ function showCards() {
   opts = opts.filter(o => !pick.includes(o));
   while (pick.length < 3 && opts.length) pick.push(opts.splice(Math.floor(Math.random() * opts.length), 1)[0]);
   // when the build is full (or past level 25) the cards keep coming as endless power-ups
-  const extra = [{type: 'dmg', ic: '💥', name: 'Güç Kristali', lv: 0, desc: 'Tüm hasar +4%'}, {type: 'mhp', ic: '❤️', name: 'Dev Kalp', lv: 0, desc: '+10 maksimum can, canın yarısı dolar'}, {type: 'spd2', ic: '💨', name: 'Rüzgar Tüyü', lv: 0, desc: 'Hız +4%'}, {type: 'cd2', ic: '⏳', name: 'Zaman Kumu', lv: 0, desc: 'Güçler %4 daha sık'}, {type: 'heal', ic: '🍓', name: 'Çilek', lv: 0, desc: 'Canın tamamen dolar'}, {type: 'gold', ic: '🪙', name: 'Altın Kesesi', lv: 0, desc: '+40 altın'}];
+  const extra = [{type: 'dmg', ic: '💥', name: 'Güç Kristali', lv: 0, desc: 'Tüm hasar +4%'}, {type: 'mhp', ic: '❤️', name: 'Dev Kalp', lv: 0, desc: '+10 maksimum can, canın yarısı dolar'}, {type: 'spd2', ic: '💨', name: 'Rüzgar Tüyü', lv: 0, desc: 'Hız +4%'}, {type: 'cd2', ic: '⏳', name: 'Zaman Kumu', lv: 0, desc: 'Güçler %4 daha sık'}, {type: 'gold', ic: '🪙', name: 'Altın Kesesi', lv: 0, desc: '+40 altın'}];
+  if (Math.random() < 0.2 && G.hp < G.maxHp * 0.7) extra.push({type: 'heal', ic: '🍓', name: 'Çilek', lv: 0, desc: '+%35 can'});
   while (pick.length < 3) pick.push(extra.splice(Math.floor(Math.random() * extra.length), 1)[0]);
   const lvShow = lvNow, LN = G.legNew && WEAP[G.legNew]; G.legNew = null; const wpCards = wp && pick.some(c => c.type === 'w');
   // the hero (XP) level is "Güç" like on the game-over screen; "Seviye" stays the story wave of the HUD (Sv N/40)
@@ -3635,7 +3637,7 @@ function bldCollapse(bi, bj) {
   for (let i = 0; i < 30; i++) FX.parts.push({x: cx + rnd(-BH, BH), y: rnd(2, 8), z: cz + BH, vx: rnd(-4, 4), vy: rnd(3, 8), vz: rnd(0, 5), life: rnd(0.8, 1.3), max: 1.3, sz: rnd(4, 8), col: '96,88,84', sq: 1});
   ringFx(cx, cz, BH + 4, 0xd8c8a8, 0.7); G.shake = Math.max(G.shake, 0.9); G.hitstop = Math.max(G.hitstop, 0.06); SFX.boom(); setTimeout(() => SFX.boom(), 140); buzz(140);
   for (let i = 0; i < 8; i++) dropGem(cx + rnd(-BH + 3, BH - 3), cz + rnd(-BH + 3, BH - 3), 3 + G.wave * 0.3);
-  const r = Math.random(); dropItem(r < 0.18 ? 'chest' : r < 0.6 ? 'heart' : 'magnet', cx + rnd(-3, 3), cz + rnd(-3, 3));
+  const r = Math.random(); dropItem(r < 0.2 ? 'chest' : r < 0.4 ? 'heart' : 'magnet', cx + rnd(-3, 3), cz + rnd(-3, 3));
   G.runCoins += 40; addScore(800, cx, cz, true); banner('', '🏚️ Bina çöktü! Altındakiler ezildi', 1.4);
 }
 // collapse animation, building wobble, hell lava
